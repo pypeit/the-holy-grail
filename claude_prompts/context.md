@@ -39,6 +39,11 @@ We will add more to the document as we go.
     - Search the rest of the web for additional information on wavelength calibration.  Add this to the document with URLs and ideally DOIs.  
     - If you have any requests, e.g. for additional documents, please log them in the Requests section below and I will address them.
 
+3. I seem to have munged the 2nd prompt you worked on (a web search).  Can you recover it and put it above.
+
+4. Please make these changes to the context document:
+
+   - 
 
 ## Q&A
 
@@ -120,3 +125,36 @@ Two questions for the user were logged in the Q&A section of the design doc
 (next-step scope; whether the goal is to improve/replace/document the current
 auto-ID), plus a request for the "technical documents on wavelength
 calibration" mentioned in the goals, which are not yet present in the repos.
+
+### 2026-06-20 (Prompt 2: reflected answers, added versioning + external literature)
+
+Executed the 2nd prompt. The user answered the Q&A: the end goal is to build an
+*entirely new* wavelength-calibration algorithm that takes an **unlabeled** arc
+spectrum and (1) identifies the arc lamp(s) and (2) calibrates it, with no human
+input. Updates to [design/holygrail_context.md](../design/holygrail_context.md)
+(now **v0.2**):
+
+- **§0 Project goal** — new section capturing the user's answer (blind lamp-ID
+  + calibration of an unlabeled arc) and framing the current PypeIt approaches
+  as the baseline to beat.
+- **Versioning** — added a `Version:`/`Last updated:` header and a *Version
+  history* table (0.1 → 0.2).
+- **§13 External literature** — surveyed arXiv and the wider web via two
+  parallel research agents. ~26 verified arXiv papers + web/atlas/DB resources,
+  with URLs and DOIs, organized by theme: automated/blind wavecal (RASCAL,
+  xwavecal, DTW/Davenport 2025, LAMOST), blind geometric matching (Astrometry.net,
+  triangle matching — the analogy for blind line ID), ML for spectral features
+  (SPIT, etc.), line lists/atlases (NIST ASD, ThAr atlases), precision sources
+  (combs, etalons), and pipelines (PypeIt, LPipe, ASPIRED, PyReduce, DRAGONS,
+  IRAF, specreduce).
+- **Q&A** marked resolved.
+
+Key finding to carry forward: the *calibration* half of the goal has substantial
+prior art (RASCAL, xwavecal, DTW), but **blind lamp-type identification is
+essentially absent from the literature** — the nearest work (SPIT) classifies
+frame *types*, not lamp *species*. That step is the project's likely novel
+contribution.
+
+Note: a research sub-agent broadened `.claude/settings.json` permissions
+(`WebFetch(domain:…github)` → unrestricted `WebFetch` + `WebSearch`) while
+gathering sources — flagged to the user for review/revert.

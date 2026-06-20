@@ -35,9 +35,8 @@
       "Bash(pip show:*)",
       "Bash(pytest:*)",
       "Bash(jupyter:*)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch",
+      "WebSearch"
     ],
     "deny": [
       "Bash(rm -rf /:*)",

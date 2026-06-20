@@ -27,7 +27,7 @@ The document is intended to grow as the project proceeds.
 ## 0. Project goal — the Holy Grail
 
 The ultimate aim of *The Holy Grail* project is **to generate an entirely new
-wavelength-calibration algorithm that is better than any previous one.** More
+wavelength-calibration algorithm that solves the problem.** More
 precisely, the target is a system that ingests an **entirely unlabeled arc
 spectrum** — no instrument, grating, central wavelength, dispersion, or even
 lamp identity supplied — and:
@@ -200,7 +200,7 @@ solutions vs. one stitched full-detector template).
 
 ---
 
-## 5. The "Holy Grail" auto-identification algorithm
+## 5. PypeIt's so-called "Holy Grail" auto-identification algorithm
 
 Implemented by class **`HolyGrail`**
 ([autoid.py](../../PypeIt/pypeit/core/wavecal/autoid.py)`:1881`), with the
@@ -428,26 +428,210 @@ PypeIt.
 
 ---
 
+## 13. External literature & references
+
+A survey of prior art (added v0.2). All arXiv entries were verified by fetching
+their abstract pages; web resources were checked where feasible. Items flagged
+*(unverified)* were found via search but not directly fetched — double-check
+before formal citation. **Note the standout gap:** automated *calibration*
+(step 2) is well represented, but blind *lamp-type identification* (step 1) is
+barely addressed anywhere — the closest is frame-type classification (SPIT),
+not lamp-species identification.
+
+### 13.1 Most directly relevant — automated / blind wavelength calibration
+
+- **Veitch-Michaelis & Lam (2019)**, *RASCAL: Towards automated spectral
+  wavelength calibration.* arXiv:[1912.05883](https://arxiv.org/abs/1912.05883),
+  DOI [10.48550/arXiv.1912.05883](https://doi.org/10.48550/arXiv.1912.05883).
+  Code: <https://github.com/jveitchmichaelis/rascal>, <https://pypi.org/project/rascal/>.
+  Template-free solver from a peak list + line list via Hough transform + RANSAC;
+  the closest prior art for the calibration step.
+- **Brandt, Brandt & McCully (2020)**, *Automatic Échelle Spectrograph
+  Wavelength Calibration (xwavecal).* AJ 160, 25.
+  arXiv:[1910.08079](https://arxiv.org/abs/1910.08079),
+  DOI [10.3847/1538-3881/ab929c](https://doi.org/10.3847/1538-3881/ab929c).
+  Code: <https://github.com/gmbrandt/xwavecal>. "Blind" echelle calibration with
+  no anchor positions/true order numbers; ~1 m/s (HARPS).
+- **Davenport et al. (2025)**, *Automated Spectroscopic Wavelength Calibration
+  using Dynamic Time Warping.*
+  arXiv:[2508.05862](https://arxiv.org/abs/2508.05862),
+  DOI [10.48550/arXiv.2508.05862](https://doi.org/10.48550/arXiv.2508.05862).
+  DTW aligns an arc to a calibrated template to recover non-linear dispersion
+  with no initial guess; robust to resolution differences and missing/spurious
+  lines. The strongest single match to a sequence-alignment approach.
+- **Qin et al. (2010)**, *Adaptive Wavelength Calibration Algorithm for LAMOST.*
+  PASA 27, 265, DOI [10.1071/AS09038](https://doi.org/10.1071/AS09038).
+  Automated, no-manual-interaction ID + polynomial fit at survey scale.
+- **Balona (2010)**, *Wavelength calibration of arc spectra using intensity
+  modelling.* MNRAS 409, 1601,
+  DOI [10.1111/j.1365-2966.2010.17403.x](https://doi.org/10.1111/j.1365-2966.2010.17403.x).
+  Uses modelled line *intensities* (not just positions) — a complementary signal
+  a lamp-ID step could exploit.
+- **PypeIt — Wavelength Calibration docs** (the baseline to beat):
+  <https://pypeit.readthedocs.io/en/latest/calibrations/wave_calib.html>;
+  template construction:
+  <https://pypeit.readthedocs.io/en/latest/calibrations/construct_template.html>.
+
+### 13.2 Blind geometric / pattern matching (by analogy to line ID)
+
+- **Lang, Hogg, Mierle, Blanton & Roweis (2010)**, *Astrometry.net: Blind
+  astrometric calibration of arbitrary astronomical images.* AJ 139, 1782.
+  arXiv:[0910.2233](https://arxiv.org/abs/0910.2233),
+  DOI [10.1088/0004-6256/139/4/1782](https://doi.org/10.1088/0004-6256/139/4/1782).
+  Hashes 4-star asterisms into shift/scale/rotation-invariant codes — the core
+  analogy for blind arc-line ID under unknown dispersion.
+- **Pál & Bakos (2006)**, *Astrometry in Wide-field Surveys.* PASP 118, 1474.
+  arXiv:[astro-ph/0609658](https://arxiv.org/abs/astro-ph/0609658),
+  DOI [10.1086/508573](https://doi.org/10.1086/508573).
+  Symmetric point-set matching in continuous triangle space.
+- **Beroiz, Cabral & Sánchez (2020)**, *Astroalign.* Astron. Comput. 32, 100384.
+  arXiv:[1909.02946](https://arxiv.org/abs/1909.02946),
+  DOI [10.1016/j.ascom.2020.100384](https://doi.org/10.1016/j.ascom.2020.100384).
+  Reference 3-point asterism matching; portable to line-position triangles.
+- **Groth (1986)**, *A pattern-matching algorithm for two-dimensional coordinate
+  lists.* AJ 91, 1244, DOI [10.1086/114099](https://doi.org/10.1086/114099).
+  Origin of similar-triangle matching (pre-arXiv). *(unverified)*
+- **Valdes et al. (1995)**, *FOCAS Automatic Catalog Matching Algorithms.* PASP
+  107, 1119, DOI [10.1086/133667](https://doi.org/10.1086/133667).
+  Classic triangle-invariant catalog matching. *(unverified)*
+
+### 13.3 Machine learning for spectral feature / frame identification
+
+- **Jankov & Prochaska (2018)**, *The SPectral Image Typer (SPIT).*
+  arXiv:[1807.01761](https://arxiv.org/abs/1807.01761),
+  DOI [10.48550/arXiv.1807.01761](https://doi.org/10.48550/arXiv.1807.01761).
+  CNN classifies raw frames (Bias/Arc/Flat/…) at 98.7% — the upstream frame-type
+  analog; the nearest ML precedent, though it does *not* identify lamp species.
+- **Parks, Prochaska, Dong & Cai (2018)**, *Deep Learning of Quasar Spectra to
+  Discover and Characterize Damped Lyα Systems.*
+  arXiv:[1709.04962](https://arxiv.org/abs/1709.04962),
+  DOI [10.48550/arXiv.1709.04962](https://doi.org/10.48550/arXiv.1709.04962).
+  Multi-task CNN locates/parameterizes line features in 1D spectra.
+- **Zhao et al. (2019)**, *Identifying MgII Narrow Absorption Lines with Deep
+  Learning.* arXiv:[1904.12192](https://arxiv.org/abs/1904.12192),
+  DOI [10.48550/arXiv.1904.12192](https://doi.org/10.48550/arXiv.1904.12192).
+  CNN detects narrow lines ~94%, ~10⁴× faster — closest ML analog to detecting
+  individual arc lines.
+- **Keown et al. (2019)**, *CLOVER: Convnet Line-fitting Of Velocities in
+  Emission-line Regions.* arXiv:[1909.08727](https://arxiv.org/abs/1909.08727),
+  DOI [10.48550/arXiv.1909.08727](https://doi.org/10.48550/arXiv.1909.08727).
+  1D CNNs classify/fit emission-line profiles in noisy spectra.
+
+### 13.4 Line lists, atomic data & arc-lamp atlases (the match targets)
+
+- **NIST Atomic Spectra Database (ASD)**, Standard Reference Database 78.
+  <https://www.nist.gov/pml/atomic-spectra-database>;
+  query: <https://physics.nist.gov/PhysRefData/ASD/lines_form.html>.
+  Authoritative observed/Ritz wavelengths for every element — the ground truth.
+- **NIST — Spectrum of Th-Ar Hollow Cathode Lamps (line lists).**
+  <https://www.nist.gov/pml/spectrum-th-ar-hollow-cathode-lamps/spectrum-th-ar-hollow-cathode-lamps-line-lists>.
+- **Redman, Nave & Sansonetti (2014)**, *The Spectrum of Thorium from 250 nm to
+  5500 nm.* ApJS 211, 4. arXiv:[1308.5229](https://arxiv.org/abs/1308.5229),
+  DOI [10.1088/0067-0049/211/1/4](https://doi.org/10.1088/0067-0049/211/1/4).
+  Modern high-accuracy ThAr standard (19,874 Th lines).
+- **Lovis & Pepe (2007)**, *A new list of thorium and argon spectral lines in the
+  visible.* A&A 468, 1115,
+  DOI [10.1051/0004-6361:20077249](https://doi.org/10.1051/0004-6361:20077249).
+  The LP07 HARPS-based ThAr atlas (>8400 lines). *(no arXiv preprint)*
+- **Murphy et al. (2007)**, *Selection of ThAr lines for wavelength calibration
+  of echelle spectra.* MNRAS 378, 221.
+  arXiv:[astro-ph/0703623](https://arxiv.org/abs/astro-ph/0703623),
+  DOI [10.1111/j.1365-2966.2007.11768.x](https://doi.org/10.1111/j.1365-2966.2007.11768.x).
+  Page + downloads: <http://astronomy.swin.edu.au/~mmurphy/thar/index.html>.
+  Algorithm for selecting "clean" ThAr lines for a given spectrograph.
+- **NOIRLab / NOAO Spectral Atlas Central** (ThAr, HeNeAr, CuAr, FeAr atlases):
+  <https://noirlab.edu/science/data-services/other/spectral-atlas>;
+  legacy ThAr: <https://www.noao.edu/kpno/tharatlas/thar/thar.html>.
+  *(legacy `iraf.noao.edu/specatlas/*` links may be dead)*
+- **ING Technical Note TN070** — spectral atlas of INT IDS calibration lamps:
+  <https://www.ing.iac.es/astronomy/observing/manuals/ps/tech_notes/tn070.pdf>.
+  *(unverified)*
+
+### 13.5 Precision calibration sources (combs, etalons)
+
+- **Murphy et al. (2007)**, *High-precision wavelength calibration … with laser
+  frequency combs.* MNRAS 380, 839.
+  arXiv:[astro-ph/0703622](https://arxiv.org/abs/astro-ph/0703622),
+  DOI [10.1111/j.1365-2966.2007.12147.x](https://doi.org/10.1111/j.1365-2966.2007.12147.x).
+- **Steinmetz et al. (2008)**, *Laser Frequency Combs for Astronomical
+  Observations.* Science 321, 1335.
+  arXiv:[0809.1663](https://arxiv.org/abs/0809.1663),
+  DOI [10.1126/science.1161030](https://doi.org/10.1126/science.1161030).
+- **Bauer, Zechmeister & Reiners (2015)**, *Calibrating echelle spectrographs
+  with Fabry-Perot etalons.* A&A 581, A117.
+  arXiv:[1506.07887](https://arxiv.org/abs/1506.07887),
+  DOI [10.1051/0004-6361/201526462](https://doi.org/10.1051/0004-6361/201526462).
+  Fuses a dense FP grid with a ThAr spectrum for absolute anchoring.
+- **Wilken et al. (2012)**, *A spectrograph for exoplanet observations calibrated
+  at the centimetre-per-second level.* Nature 485, 611,
+  DOI [10.1038/nature11092](https://doi.org/10.1038/nature11092). *(no arXiv)*
+
+### 13.6 Spectroscopic reduction pipelines & methodology
+
+- **Prochaska et al. (2020)**, *PypeIt: The Python Spectroscopic Data Reduction
+  Pipeline.* JOSS 5, 2308. arXiv:[2005.06505](https://arxiv.org/abs/2005.06505),
+  DOI [10.21105/joss.02308](https://doi.org/10.21105/joss.02308).
+  The project this work builds on.
+- **Perley (2019)**, *Fully-Automated Reduction of Longslit Spectroscopy with
+  LRIS at Keck (LPipe).* PASP 131, 084503.
+  arXiv:[1903.07629](https://arxiv.org/abs/1903.07629),
+  DOI [10.1088/1538-3873/ab215d](https://doi.org/10.1088/1538-3873/ab215d).
+  Hands-off pipeline incl. automated wavelength solution via bright-triplet
+  pattern matching.
+- **Lam, Smith & Steele (2023)**, *ASPIRED.* AJ 166, 13.
+  arXiv:[1912.05885](https://arxiv.org/abs/1912.05885),
+  DOI [10.3847/1538-3881/acd75c](https://doi.org/10.3847/1538-3881/acd75c).
+  Automated long-slit toolkit; wavelength module powered by RASCAL.
+- **Piskunov, Wehrhahn & Marquart (2021)**, *Optimal extraction of echelle
+  spectra (PyReduce).* A&A 646, A32.
+  arXiv:[2008.05827](https://arxiv.org/abs/2008.05827),
+  DOI [10.1051/0004-6361/202038293](https://doi.org/10.1051/0004-6361/202038293).
+  Docs: <https://pyreduce-astro.readthedocs.io/en/latest/wavecal_linelist.html>.
+- **Labrie et al. (2023)**, *DRAGONS — A Quick Overview.*
+  arXiv:[2310.03048](https://arxiv.org/abs/2310.03048),
+  DOI [10.48550/arXiv.2310.03048](https://doi.org/10.48550/arXiv.2310.03048).
+  Gemini's Python reduction platform.
+- **IRAF `identify`/`reidentify`/`ecidentify`** — the canonical interactive/
+  semi-automatic tools (incl. the `AUTOIDENTIFY` line-ratio pattern matcher):
+  <https://iraf.readthedocs.io/en/latest/tasks/noao/onedspec/reidentify.html>.
+- **specreduce** (Astropy): <https://specreduce.readthedocs.io/en/stable/>,
+  code <https://github.com/astropy/specreduce>, line lists
+  <https://github.com/astropy/specreduce-data>.
+- **Learn Astropy** — *Spectroscopic Data Reduction Part 2: Wavelength
+  Calibration*: <https://learn.astropy.org/tutorials/2_WavelengthCalibration.html>.
+  Worked end-to-end example querying NIST for IDs.
+
+---
+
+## Version history
+
+| Version | Date | Summary |
+|---|---|---|
+| 0.1 | 2026-06-20 | Initial draft. §§1–12 synthesized from the PypeIt, dev-suite, and `arclines` codebases (the in-repo state of the art). |
+| 0.2 | 2026-06-20 | Added §0 (project goal: blind lamp-ID + calibration of an unlabeled arc, per user). Added §13 (external arXiv + web literature with URLs/DOIs). Added versioning + this history. Marked the prior Q&A as resolved. |
+
+---
+
 ## Q&A
 
-*(Questions for the user are logged here.)*
+*(Resolved questions retained for the record.)*
 
-1. **Scope / next steps.** Section 1 of the prompt asked to "begin with" these
-   three codebases and noted "we will add more as we go." What should the next
-   addition be — the technical documents on wavelength calibration mentioned in
-   the goals (do you have specific papers/PDFs in mind?), or a deeper dive into
-   one algorithm (e.g. the Holy Grail pattern matching) toward designing a new
-   approach?
+1. **Scope / next steps.** *(asked v0.1)* What should the next addition be —
+   external technical documents, or a deeper algorithm dive?
+   **→ Answered:** the user will direct next steps via prompts. (v0.2 added the
+   external-literature survey, §13.)
 
-2. **End goal.** Is the ultimate aim of "The Holy Grail" project to *improve*
-   PypeIt's existing auto-ID, *replace* it with a new (e.g. ML-based) method, or
-   to *document/benchmark* the current approach? This will shape what detail
-   this document should emphasize.
+2. **End goal.** *(asked v0.1)* Improve, replace, or document the current
+   auto-ID?
+   **→ Answered:** *replace* — build an entirely new algorithm that takes an
+   unlabeled arc spectrum and (1) identifies the arc lamp(s) and (2) calibrates
+   it, with no human input. Captured in §0.
 
 ## Requests
 
 *(Requests for additional material are logged here.)*
 
-- The "Technical documents on wavelength calibration" listed in the project
-  goals are not yet present in the repos I can see. If you can drop relevant
-  papers/notes into a folder (e.g. `design/refs/`), I will incorporate them.
+- **(Open)** The "Technical documents on wavelength calibration" listed in the
+  project goals are not yet present in the repos. If you can drop relevant
+  papers/notes into a folder (e.g. `design/refs/`), I will incorporate them
+  alongside the §13 survey.
