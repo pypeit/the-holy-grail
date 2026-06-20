@@ -2,7 +2,7 @@
 
 > *"One solution to rule them all."*
 
-**Version:** 0.2 · **Last updated:** 2026-06-20
+**Version:** 0.4 · **Last updated:** 2026-06-20
 (see [Version history](#version-history) at the end)
 
 This document summarizes everything we have learned about how astronomers
@@ -47,6 +47,40 @@ identification — is essentially absent from the published literature** (see
 §13), which is a genuine gap this project can fill. The rest of this document
 characterizes the current approaches (as the baseline to beat) and the relevant
 external work (as prior art and ideas to draw on).
+
+### 0.1 Data corpus to build on
+
+The project will **leverage the existing PypeIt datasets as a labelled corpus**
+(confirmed with the user). Three complementary, already-curated resources cover
+both project steps:
+
+1. **`PypeIt-development-suite/RAW_DATA/`** — real *raw* arc frames spanning ~45
+   instrument arms (Keck LRIS/DEIMOS/HIRES/ESI/KCWI/MOSFIRE/NIRES/NIRSPEC,
+   Gemini GMOS/GNIRS/Flamingos2, VLT, Magellan, Shane/Kast, GMOS, SOAR, …; see
+   §9). **Lamp labels are available** per frame from the companion
+   `pypeit_files/*.pypeit` setup tables (the `arc,tilt` frametype rows carry a
+   lamp/target column, e.g. `CuAr`, `GCALflat`) and from the FITS headers /
+   each spectrograph's default `lamps` parameter. This is the realistic, diverse,
+   **labelled raw input** for the *lamp-ID* step (step 1).
+2. **`PypeIt/pypeit/data/arc_lines/reid_arxiv/`** — **242 solved 1D reference
+   arcs** (229 FITS + 13 legacy JSON): flux vs. *already-calibrated* wavelength,
+   per instrument/grating config (§2.2). These give **calibration ground truth**
+   (the wavelength solution) and clean per-configuration template spectra — ideal
+   for the *calibration* step (step 2) and as DTW/reidentify templates. Caveat:
+   lamp species are encoded in the *filenames* only inconsistently
+   (`keck_lris_red_R600_7500_ArCdHgKrNeXeZn.fits` does, `gemini_gmos_b600_ham.fits`
+   does not) — derive lamp truth from headers / the source setup, not the name.
+3. **`PypeIt/pypeit/data/arc_lines/lists/`** — the per-ion atomic line lists
+   (§2.1): the authoritative "which lines belong to which species" reference,
+   usable both to *synthesize* labelled training spectra and as the match target.
+
+Together these provide (a) a labelled set for lamp classification, (b) ground-
+truth wavelength solutions for evaluating calibration accuracy (against the same
+RMS gates the dev-suite already enforces, §9), and (c) the atomic data to
+generate unlimited synthetic arcs with known lamp + dispersion for training/
+stress-testing. A train/test split and any held-out instruments are TBD (see
+Q&A); the natural caution is to **split by instrument/configuration** so the
+algorithm is tested on setups it has never seen.
 
 ---
 
@@ -444,8 +478,9 @@ not lamp-species identification.
   wavelength calibration.* arXiv:[1912.05883](https://arxiv.org/abs/1912.05883),
   DOI [10.48550/arXiv.1912.05883](https://doi.org/10.48550/arXiv.1912.05883).
   Code: <https://github.com/jveitchmichaelis/rascal>, <https://pypi.org/project/rascal/>.
-  Template-free solver from a peak list + line list via Hough transform + RANSAC;
-  the closest prior art for the calibration step.
+  Solver from a peak list + line list via Hough transform + RANSAC; the closest
+  prior art for the calibration step. **Full text read — see §14.1** (PDF in
+  [design/docs/veitch2019.pdf](docs/veitch2019.pdf)).
 - **Brandt, Brandt & McCully (2020)**, *Automatic Échelle Spectrograph
   Wavelength Calibration (xwavecal).* AJ 160, 25.
   arXiv:[1910.08079](https://arxiv.org/abs/1910.08079),
@@ -459,6 +494,8 @@ not lamp-species identification.
   DTW aligns an arc to a calibrated template to recover non-linear dispersion
   with no initial guess; robust to resolution differences and missing/spurious
   lines. The strongest single match to a sequence-alignment approach.
+  **Full text read — see §14.2** (PDF in
+  [design/docs/davenport2025.pdf](docs/davenport2025.pdf)).
 - **Qin et al. (2010)**, *Adaptive Wavelength Calibration Algorithm for LAMOST.*
   PASA 27, 265, DOI [10.1071/AS09038](https://doi.org/10.1071/AS09038).
   Automated, no-manual-interaction ID + polynomial fit at survey scale.
@@ -603,12 +640,128 @@ not lamp-species identification.
 
 ---
 
+## 14. In-depth reads of key prior-art papers
+
+Full-text notes on papers the user supplied as PDFs in
+[design/docs/](docs/) (added v0.3). Both are squarely the **calibration** half
+of the project (step 2). **Neither attempts lamp identification (step 1)** —
+both *assume the lamp/template is already known* — which directly corroborates
+the §13 gap: blind lamp-ID is the genuinely novel piece.
+
+### 14.1 RASCAL — Hough transform + RANSAC (Veitch-Michaelis & Lam 2019)
+
+[design/docs/veitch2019.pdf](docs/veitch2019.pdf) · ADASS XXIX proceedings ·
+arXiv:1912.05883. A Python library (the first public astronomy implementation of
+the **Song et al. 2018**, *Appl. Opt.* 57, 6876 algorithm), developed for the
+ASPIRED pipeline.
+
+**Problem framing.** Given detected peak pixels `P` and an atlas of emission
+lines `A` [λ], find for each peak its matching atlas line; then fit
+`f(x, p) = xλ`. In the general case *any* peak could match *any* atlas line, with
+spurious peaks, undetected atlas lines, blends, and centroid noise — so robust
+fitting is essential.
+
+**Required inputs (note — not fully blind).** An atlas of calibration lines (so
+*the lamp must be known*), a peak list (e.g. `scipy.signal.find_peaks`), and
+*"some information about the system"*: a wavelength range of interest (default
+tolerance **±200 Å**) and a dispersion `D` constrained from the pixel count and
+wavelength range. So RASCAL automates step 2 but presupposes step 1 and a rough
+configuration.
+
+**Algorithm.**
+1. Filter the atlas to the range of interest → `A'`.
+2. Enumerate the full Cartesian product `A' × P` (all peak↔line pairs).
+3. **Hough transform** over the *linear* model `xλ = D·x + c`: every pair votes
+   into a 2D accumulator in `(D, c)` (dispersion, intercept) space. Dense cells
+   = "candidate sets" of mutually-consistent correspondences.
+4. **Improvement over Song et al.:** rather than fit each candidate set
+   separately and pick the best (which fails under strong curvature), they take
+   the **top N = 20** candidate sets *simultaneously* and, for each peak, choose
+   the most common best-fit atlas line across them — a piecewise-linear-like
+   vote that recovers matches across both the red and blue ends.
+5. **RANSAC** robustly fits a 4th–5th-order polynomial to the surviving
+   correspondences; the result can seed a more sophisticated instrument model.
+
+**Performance / status.** Pure-Python (numpy/scipy/matplotlib/astropy), < 10 s on
+a laptop, demonstrated on a Xe arc from SPRAT (Liverpool Telescope).
+
+**Relevance to the Holy Grail.** This is the **Hough + RANSAC** route, conceptually
+close to PypeIt's own from-scratch matching but voting in linear `(D, c)` space
+rather than scale-invariant pattern space. Key limitation for our goal: the
+candidate generation is anchored on a *linear* dispersion approximation and a
+±200 Å range prior, and it still needs the lamp identity. A blind algorithm
+would have to drop both the range prior and the lamp prior.
+
+### 14.2 DTW — sequence alignment to a template (Davenport et al. 2025)
+
+[design/docs/davenport2025.pdf](docs/davenport2025.pdf) · arXiv:2508.05862 ·
+introduces the **PyKOSMOS** toolkit. Applies **Dynamic Time Warping** (from
+speech recognition; here the Giorgino 2009 R/Python implementation) to align a
+query arc to a *calibrated template* arc, recovering even non-linear and
+discontinuous dispersions with **no initial guess**.
+
+**Two-step algorithm.**
+1. **DTW alignment.** Boxcar-extract query and template spectra; normalize each
+   by its median flux (so amplitudes are comparable regardless of exposure).
+   Run DTW with `open_begin`/`open_end` (align the query to a *subsection* of a
+   larger template) and `step_pattern='asymmetric'`. DTW returns the warp that
+   maps query→reference using the **entire spectrum**, so even weak lines
+   contribute.
+2. **Line-based refinement.** Raw DTW can produce "jumpy"/non-physical
+   pixel-level warps, so they then detect peaks (`scipy.find_peaks`, ≥ 5 px
+   apart, Gaussian-centroided), transfer each line's wavelength from the
+   template via the alignment, and fit a smooth model (polynomial, spline, or
+   Gaussian Process) — exactly the IRAF `IDENTIFY` final step. They explicitly
+   **warn against using raw DTW alone** for narrow-line arcs.
+
+**Validation.** A deliberately hard synthetic arc (30 lines, *discontinuous*
+piecewise log/linear dispersion, 25 % of lines missing, low S/N, extra reference
+lines) solved in **1.6 s**. Real KOSMOS Ne/Ar/Kr across six grisms; and
+cross-instrument transfer — KOSMOS Ne+Ar templates successfully calibrated DIS
+HeNeAr at R≈7000 despite missing He and different optics.
+
+**Limitations.** Because DTW matches the *whole* spectrum (amplitudes and
+profiles, not just peak positions), it **fails when instruments differ strongly**
+(e.g. DIS R300, dominated by scattered light and broadening) and when too few
+lines are present ("Blue Low" grism). The authors recommend **per-instrument
+templates**. Stated aim: replace IRAF `IDENTIFY`; not EPRV-precision. DTW could
+also align each echelle order given a template.
+
+**Relevance to the Holy Grail.** This is the **template-based** route — strictly
+more demanding on prior knowledge than RASCAL: it needs a *calibrated reference
+arc of (roughly) the same lamp combination*, i.e. it presupposes step 1 even
+more directly. Its strength (robustness to non-linear/discontinuous dispersion,
+differing resolution) and its weakness (amplitude/profile sensitivity from using
+the whole spectrum) are both instructive: a Holy Grail solver likely wants
+DTW-like tolerance to non-linearity **without** DTW's dependence on a matched
+template or on line amplitudes.
+
+### 14.3 Takeaways for the project
+
+- Both leading automated methods are **step-2 only** and assume the lamp is
+  known (RASCAL via the atlas + range prior; DTW via the template). The blind
+  **lamp-identification** problem (step 1) remains open — the project's clearest
+  novel contribution.
+- Two complementary matching paradigms to draw on: **parameter-space voting**
+  (RASCAL's Hough in `(D, c)`; PypeIt's `(wvcen, disp)` histogram) and
+  **sequence alignment** (DTW). A blind solver may need to combine the
+  scale/shape-invariance of the former with the non-linear tolerance of the
+  latter.
+- Recurring robustness tools across all prior art: RANSAC / robust polynomial
+  fitting, redundant voting across many candidate correspondences, and a final
+  peak-based smooth fit. Amplitude information is double-edged — Balona (2010)
+  and DTW exploit it, but it hurts cross-instrument transfer.
+
+---
+
 ## Version history
 
 | Version | Date | Summary |
 |---|---|---|
 | 0.1 | 2026-06-20 | Initial draft. §§1–12 synthesized from the PypeIt, dev-suite, and `arclines` codebases (the in-repo state of the art). |
 | 0.2 | 2026-06-20 | Added §0 (project goal: blind lamp-ID + calibration of an unlabeled arc, per user). Added §13 (external arXiv + web literature with URLs/DOIs). Added versioning + this history. Marked the prior Q&A as resolved. |
+| 0.3 | 2026-06-20 | Added §14 — full-text reads of the two user-supplied PDFs (RASCAL/Hough+RANSAC; Davenport DTW), with cross-refs from §13.1. Confirmed both are step-2-only (lamp assumed known), reinforcing blind lamp-ID as the open problem. |
+| 0.4 | 2026-06-20 | Added §0.1 (data corpus): per user, leverage dev-suite `RAW_DATA/` (labelled raw arcs, ~45 instruments), `reid_arxiv/` (242 solved reference arcs = calibration ground truth), and `arc_lines/lists/` (atomic data). Resolved Q3. |
 
 ---
 
@@ -626,6 +779,11 @@ not lamp-species identification.
    **→ Answered:** *replace* — build an entirely new algorithm that takes an
    unlabeled arc spectrum and (1) identifies the arc lamp(s) and (2) calibrates
    it, with no human input. Captured in §0.
+
+3. **Corpus for blind lamp-ID.** *(asked v0.3)* Can the dev-suite `RAW_DATA/`
+   and `reid_arxiv/` serve as the labelled corpus, with a preferred split?
+   **→ Answered:** *yes — definitely leverage those.* Captured in §0.1. (A
+   specific train/test split / held-out instruments remain to be decided.)
 
 ## Requests
 
