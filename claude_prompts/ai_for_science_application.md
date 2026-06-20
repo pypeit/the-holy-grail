@@ -28,13 +28,16 @@ Confirmed against the official application form PDF in `proposals/`
 
 - **What:** free Anthropic **API** credits (the *standard model suite*; not the
   Claude web app) for nonprofit/academic researchers on high-impact projects.
-- **Award:** up to **$50,000** in API credits (not $20k — the doc's earlier
-  figure is superseded). The **specific amount is decided during evaluation**;
-  the form asks the applicant to state how much they anticipate needing and why.
-- **No fixed grant period.** The program does **not** state a 6-month window.
-  The form asks only for a project **"timeline for completion"** (open-ended)
-  and the anticipated credit amount. Any 6-month plan in this doc is a *proposal
-  choice*, not a program constraint — present it that way.
+- **Award:** ⚠️ **SOURCES CONTRADICT.** The application **form PDF** (p.1, "About
+  our Process") says up to **$50,000**; the **help-center article** (verified
+  2026-06-20, Prompt 8) says up to **$20,000**. Unresolved — the PI must confirm
+  the true ceiling before submitting. The draft requests **$48k** on the form's
+  figure. The specific amount is decided during evaluation; the form asks the
+  applicant to state how much they anticipate and why.
+- **Grant period:** ⚠️ also contradictory. The **help-center** states a
+  **6-month period**; the **form** mentions no fixed window and asks only for a
+  project "timeline for completion." Our ~6-month plan is consistent with the
+  help-center either way — present it as the plan, but it is *not* contradicted.
 - **Eligibility:** researchers at **academic / nonprofit** institutions.
 - **No Usage-Policy exemption:** standard Trust & Safety enforcement applies.
 - **Application:** a Google Form (see field map in Prompt 1) covering contact +
@@ -172,7 +175,7 @@ collecting them up front helps:
    spectrum into a wavelength solution with no human input), the two sub-goals
    (lamp-ID, then calibration), and why it matters.
 
-2. **Scientific motivation & impact.** *(Feeds the project-description opening and
+2. *(Done — see Logs.)* **Scientific motivation & impact.** *(Feeds the project-description opening and
    the "potential scientific impact" field — 200 words max.)* Using context §1
    (the problem), §9 (instrument/lamp diversity), and §13 (literature), write the
    motivation: how much astronomer/pipeline time wavelength calibration costs;
@@ -183,7 +186,7 @@ collecting them up front helps:
    high-throughput and archival spectroscopy. Quantify where possible. Keep the
    distilled impact statement to ≤200 words.
 
-3. **Technical approach.** From context §3–§8 (current PypeIt methods, the
+3. *(Done — see Logs.)* **Technical approach.** From context §3–§8 (current PypeIt methods, the
    baseline to beat), §5 (scale-invariant pattern matching), and §14 (RASCAL
    Hough+RANSAC; DTW), lay out the proposed method: (a) lamp-ID step — how an
    LLM/ML + statistical approach could classify the lamp from raw spectral
@@ -192,7 +195,7 @@ collecting them up front helps:
    explicit about what is novel vs. what reuses prior art. Reference the
    evaluation metric (RMS vs. FWHM-scaled threshold, context §3, §9).
 
-4. **Use of Claude / the API credits.** *(Feeds two fields: "How specifically
+4. *(Done — see Logs.)* **Use of Claude / the API credits.** *(Feeds two fields: "How specifically
    will Claude's capabilities be used" — 300 words max — and "How will Claude
    significantly accelerate/enhance vs. existing methods" — 200 words max.)*
    Concretely describe *how Claude is used in the research* (central to the
@@ -204,7 +207,7 @@ collecting them up front helps:
    to feed Prompt 6. Distinguish funded **API** use from incidental tooling
    (Claude Code, web app), since the program funds API credits only.
 
-5. **Team & credentials.** *(Feeds the <300-word team description, the "key team
+5. *(Done — see Logs.)* **Team & credentials.** *(Feeds the <300-word team description, the "key team
    members using Claude" list, and the Scholar-links field.)* Using the
    user-supplied inputs, write the team section establishing credibility in
    **both** spectroscopy/astronomy (PypeIt authorship, instrument expertise) and
@@ -212,7 +215,7 @@ collecting them up front helps:
    words**; the SciXplorer links above serve as the profile links. Request any
    missing AI/ML credentials (Cooke, Hennawi) via the Q&A.
 
-6. **Feasibility, milestones & budget.** *(The timeline + outcomes feed the
+6. *(Done — see Logs.)* **Feasibility, milestones & budget.** *(The timeline + outcomes feed the
    <500-word project description; the budget feeds "anticipated API credit
    amount … how it leads to impact"; the metrics feed "how you'll measure
    success of using Claude" — 200 words max.)* Using context §0.1 (the ready-made
@@ -227,7 +230,7 @@ collecting them up front helps:
    Claude integration (e.g. fraction of dev-suite setups passing the RMS gate
    blind; lamp-ID accuracy). Argue feasibility from the existing data + baseline.
 
-7. **Broader impact & program fit.** *(Feeds "applications beyond pure discovery /
+7. *(Done — see Logs.)* **Broader impact & program fit.** *(Feeds "applications beyond pure discovery /
    paths to scale" — 200 words max — and informs the "anything else" field.)*
    Make the explicit case for funding an *astronomy/instrumentation* project: it
    is **open-source scientific infrastructure** (PypeIt is community-standard);
@@ -236,7 +239,7 @@ collecting them up front helps:
    an eligible field); reproducibility and public data. Address why Claude
    specifically (reasoning over heterogeneous scientific data + code).
 
-8. **Red-team & finalize.** Run a critical pass (consider the `critical-partner`
+8. *(Done — see Logs.)* **Red-team & finalize.** Run a critical pass (consider the `critical-partner`
    skill): check every claim against `design/holygrail_context.md`; verify the
    program facts against the official pages (References); tighten the impact
    statements in light of the full draft. **Enforce every form word limit**
@@ -279,7 +282,16 @@ The PI/team are as listed in the Inputs needed from the user section.  The budge
    attach to? *(Required form field — needed before submission.)*
 
 4. **Credit amount.** The ceiling is now **$50k** (not $20k). What figure should
-   the budget request, and over what project timeline? *(Still TBD per Q2.)*
+   the budget request, and over what project timeline?
+
+   → PI direction (2026-06-20): request **near the $50k ceiling**. Budget now set
+   to **$48k** (agentic-iteration line scaled up). Timeline still ~6 months (TBD
+   per Q2 — confirm start date).
+
+   → ⚠️ Prompt-8 red-team finding: the **help-center article says $20k / 6-month**,
+   while the **form PDF says $50k**. The $48k request is only valid if the form's
+   $50k is current — **PI must resolve this before submitting**; if the cap is
+   $20k, rescale the budget.
 
 5. **"Where did you hear about this program?"** What should this field say?
 
@@ -359,3 +371,176 @@ and the opening of the <500-word project description.
 
 Next: Prompt 2 (scientific motivation & impact). Several user inputs (Q&A 3–6)
 should be supplied before the draft can be finalized.
+
+### 2026-06-20 (Prompt 2 — scientific motivation & impact)
+
+Drew on context §1 (the problem), §9 (instrument/lamp diversity + RMS gates),
+§13 (literature gap) and §14.3 (lamp-ID is the open problem). Wrote two pieces of
+the draft:
+
+- **Project-description → "Scientific question / problem"** sub-block: framed
+  wavelength calibration as gating every spectroscopic reduction; the
+  line-identification bottleneck; the two assumptions modern solvers still
+  require (known lamp; instrument-specific prior/archive); and the literature
+  gap — blind *lamp ID* is absent (RASCAL, DTW, xwavecal are step-2-only;
+  SPIT classifies frame type, not lamp species). Also restructured that field
+  into four labelled sub-blocks (question / methodology / outcomes / timeline)
+  so Prompts 3 and 6 slot in.
+- **"Potential scientific impact if successful"** field (~150 words, under the
+  200-word cap): transferable, instrument-agnostic calibrator dropping into
+  PypeIt (~59 arms / ~224 setups), enabling high-throughput + archival
+  spectroscopy and closing the blind-lamp-ID gap as a reusable template.
+
+Quantification used: ~59 instrument arms / ~224 dev-suite setups; per-slit/order
+RMS as the sole success gate; hundreds–thousands of spectra per exposure for
+multi-object/IFU. Next: Prompt 3 (technical approach).
+
+### 2026-06-20 (Prompt 3 — technical approach)
+
+Filled the project-description **"Methodology & approach"** sub-block from §3–§8
+(PypeIt baseline), §5 (scale-invariant patterns), and §14.1/§14.2 (RASCAL
+Hough+RANSAC; Davenport DTW). Laid out two chained stages and was explicit about
+novel vs. reused:
+
+- **Stage 1 — blind lamp ID = novel** (ML/LLM classifier on detected-peak
+  pattern + features; trained on labelled raw arcs + synthetic arcs from the
+  atomic line lists). Output narrows the line list for Stage 2.
+- **Stage 2 — blind calibration = recombination of prior art minus its priors:**
+  parameter-space voting (PypeIt §5 cross-ratios + RASCAL Hough in `(D,c)`)
+  *without* range/dispersion prior, seeded by Stage 1 not a human; refined with
+  DTW-style non-linear tolerance *without* DTW's matched-template / amplitude
+  dependence; robust Legendre/RANSAC final fit with line-growth (§7).
+- **Evaluation metric** wired to PypeIt's own gate: per-slit/order
+  `RMS < rms_thresh_frac_fwhm × FWHM` (0.15×FWHM px) + dev-suite instrument Å
+  thresholds (§3, §9), on instrument/config-held-out setups.
+
+The project-description field is now long across its sub-blocks; Prompt 8 will
+trim it to <500 words. Next: Prompt 4 (use of Claude / API credits).
+
+### 2026-06-20 (Prompt 4 — use of Claude / API credits, grounded in current pricing)
+
+Loaded the `claude-api` skill to ground model choice + pricing rather than guess.
+Current facts used: Opus 4.8 = $5/$25 per 1M in/out; Sonnet 4.6 = $3/$15; Haiku
+4.5 = $1/$5; **Batch API = 50% off**; prompt-cache reads ≈0.1× input, writes
+1.25× (5-min) / 2× (1-h). Per user request, **vendored the skill into
+`.claude/skills/claude-api/`** (copied the 884K language/`shared/` reference
+folders from the bundle and authored a `SKILL.md` with frontmatter — the bundle
+ships no top-level SKILL.md, and the `<doc>` blocks are appended by the loader
+from the folders, so the vendored copy carries the folders + a body that points
+at them).
+
+Filled two draft fields:
+- **"How specifically will Claude be used"** (~230 w, ≤300): five API workloads —
+  (1) blind lamp ID via Opus 4.8 reasoning + high-res vision over peaks/metadata/
+  plots; (2) LLM-as-judge solution vetting; (3) agentic experimentation loop over
+  the dev-suite corpus; (4) code-gen + PypeIt integration; (5) literature/line-
+  list synthesis. Tagged per-use token scale for Prompt 6 (agentic loop dominant
+  + cacheable; judging high-volume but batchable/tier-able; vision adds image
+  tokens) and flagged Claude Code as incidental, *non-funded* tooling.
+- **"How Claude accelerates vs. existing"** (~150 w, ≤200): baseline is
+  human-gated (`holy-grail` needs the lamp list + "can fail catastrophically";
+  production leans on per-setup expert templates via `pypeit_identify`); Claude
+  removes the human from lamp-ID + vetting (a judgment task no matcher does) and
+  collapses weeks of per-instrument tuning into corpus-wide iteration.
+
+Next: Prompt 5 (team & credentials) — still needs Cooke/Hennawi AI/ML lines
+(Q&A 6).
+
+### 2026-06-20 (Prompt 5 — team & credentials)
+
+Filled the **team description** (~210 w, ≤300) and the **key-members-using-Claude**
+list. Established AI/ML credibility for the PI from grounded facts in context
+§13.3: Prochaska's SPIT (Jankov & Prochaska 2018, CNN frame classifier, 98.7%)
+and the DLA CNN (Parks, Prochaska et al. 2018) — both direct precedents for
+spectral pattern ID. Domain credentials given for all three (PypeIt authorship,
+high-precision spectroscopy, quasar/IGM + surveys). The profile-links field was
+already populated in Prompt 1 (SciXplorer + GitHub).
+
+Flagged, not invented: **Cooke and Hennawi AI/ML experience remain [TBD — user]
+(Q&A 6)**; also flagged **Hennawi's PypeIt role wording for user confirmation** —
+the Inputs section lists "Co-founder" only for Prochaska and Cooke, so I wrote
+Hennawi as "co-developer [confirm]" rather than asserting co-founder.
+
+Next: Prompt 6 (feasibility, milestones, budget) — fills the project-description
+outcomes/timeline sub-blocks, the success-metrics field, and the credit budget
+(≤ $50k); the dollar figure still needs the user's target (Q&A 4).
+
+### 2026-06-20 (Prompt 6 — feasibility, milestones & budget)
+
+Filled four pieces from context §0.1 (corpus) and §9 (RMS gates):
+
+- **Project-description "Expected outcomes & deliverables"** — open-source blind
+  calibrator in PypeIt, benchmark report vs. dev-suite gates + `holy-grail`
+  baseline, released labelled dataset/splits, methods paper.
+- **Project-description "Timeline"** — ~6-month milestone plan (M1 corpus +
+  split; M1–2 lamp-ID; M2–4 calibration; M4–5 dev-suite eval; M5–6 integration +
+  write-up), framed explicitly as a proposal choice, not a program window.
+- **"How you'll measure success"** (~140 w, ≤200) — blind RMS-gate pass rate on
+  held-out setups, lamp-ID accuracy, delta vs. baseline, and Claude-integration
+  metrics (judge precision/recall, credits-per-solved-setup).
+- **Credit budget** — per-workload table grounded in the Prompt-4 uses and
+  current pricing (Opus $5/$25, Batch −50%, cache reads ≈0.1×). **Per PI
+  request (2026-06-20), set near the $50k ceiling: $48k** — agentic loop ~$32k
+  (dominant, cached, run at high effort), judging ~$6k (batched/tiered), vision
+  ~$5k, synthesis ~$2k, contingency ~$3k. Order-of-magnitude check: ~80–100
+  rounds (or fewer at `xhigh`/`max` effort). (Initial draft was $35k; raised to
+  $48k at the PI's direction, scaling the agentic-iteration line.)
+
+**Flagged:** the $48k figure still benefits from a final PI confirmation
+(Q&A 4); the user has directed it toward the ceiling.
+
+Next: Prompt 7 (broader impact & program fit) — the "applications beyond pure
+discovery / paths to scale" field (≤200 w) + the "anything else" field.
+
+### 2026-06-20 (Prompt 7 — broader impact & program fit)
+
+Filled two fields:
+
+- **"Applications beyond pure discovery / paths to scale"** (~180 w, ≤200): three
+  beats — (1) open-source infrastructure with immediate reach (ships in PypeIt,
+  ~45 arms; scales to hands-off calibration for every user + archival mining of
+  legacy spectra); (2) the method generalizes (blind source-ID + reference-library
+  calibration is a template for mass spec / NMR / Raman / sensor calibration —
+  Physics is a listed form field); (3) reproducibility + public data (open code,
+  public dev-suite benchmark, released corpus).
+- **"Anything else for the committee"** (optional): why Claude specifically (one
+  agent chains judgment over heterogeneous data + code/integration, vs. separate
+  bespoke models + glue); program fit (astronomy under the Physics field option);
+  track record (Anthropic Team customer since 2025, Claude Code already in use →
+  ready to deploy credits immediately).
+
+Next: Prompt 8 (red-team & finalize) — verify claims vs context doc, enforce all
+word limits, confirm form-field completeness (biosecurity, Org ID, email,
+Physics+Other, ToS), produce a clean draft + submission checklist. Outstanding
+user inputs before submission: Q&A 3 (email + Org ID), Q&A 5 (where-heard),
+Q&A 6 (Cooke/Hennawi AI/ML); budget confirmed near ceiling at $48k (Q&A 4).
+
+### 2026-06-20 (Prompt 8 — red-team & finalize)
+
+Ran the finalize pass. Findings + fixes:
+
+- **⚠️ CRITICAL — credit-ceiling contradiction.** WebFetched the official
+  help-center article: it states **up to $20,000** over a **6-month period**.
+  The application **form PDF says $50,000**. The program's own materials
+  disagree. Flagged prominently at the top of the draft, on the budget field, in
+  Background, and in Q&A 4 — PI must resolve before submitting. (The help-center
+  *does* confirm a 6-month period, so our ~6-month plan is fine; it also lists
+  "biosecurity screening" as a criterion, validating our biosecurity section.)
+- **Word limits — counted every capped field.** Only the **project description
+  was over** (602 → trimmed to ~395, <500). All others within cap (team ~170,
+  Claude-use ~218/300, vs-existing ~142/200, impact ~144/200, applications
+  ~159/200, success ~123/200). Added a word-count table to the checklist.
+- **Internal number inconsistency fixed:** the draft mixed "~45" and "~59"
+  instrument arms. Standardized: **~45** = PypeIt/RAW_DATA corpus breadth;
+  **~224 setups** = dev-suite benchmark; removed the standalone "~59 arms."
+- **Soft claim grounded:** "weeks of per-instrument tuning" → "substantial,
+  per-instrument tuning" (the "weeks" figure isn't in the context doc).
+- **Finalized** the project title (dropped the working-title note).
+- **Claims spot-checked** against context doc (gap §13/§14.3; RASCAL/DTW step-2
+  §14; SPIT 98.7% §13.3; 242 arcs §0.1; RMS<0.15×FWHM §3/§11) — all hold.
+- **Added a submission checklist** keyed to the form fields (de-scaffolding step,
+  word-count table, form mechanics, outstanding PI inputs, claim spot-check).
+
+Draft is content-complete and within all limits. **Blocking before submission:**
+resolve the $20k/$50k ceiling (Q&A 4); fill email + Org ID (Q&A 3); "where heard"
+(Q&A 5); Cooke/Hennawi AI/ML (Q&A 6); confirm Hennawi's PypeIt role + start date.
