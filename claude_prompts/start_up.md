@@ -46,6 +46,30 @@ The "Logs" section will record Claude's work.  Please use the following format:
 
 ## Logs
 
+### 2026-06-20 (Basic Python repo scaffolding + settings.json suggestion)
+
+Surveyed the repositories in `Oceanography/python` to learn the user's conventions.
+The dominant pattern (and closest analog, IOPtics, which shares the `claude_prompts/`
+layout): a lowercase package directory named after the project with an `__init__.py`,
+plus `setup.py`, `requirements.txt`, `README.md`, `LICENSE`, and `.gitignore` at the
+root (newer repos sometimes use `pyproject.toml` instead of `setup.py`). Common
+optional dirs: `docs/`, `bin/`, `nb/`.
+
+Generated the missing scaffolding (README, LICENSE, .gitignore already existed):
+- `requirements.txt` — modeled on IOPtics, trimmed to this project and with `astropy`
+  added since this is spectral / arc-line work.
+- `setup.py` — modeled on IOPtics (name `holygrail`, BSD, version `0.0.dev0`,
+  `find_packages`, optional `bin/` scripts).
+- `holygrail/__init__.py` — empty package init. Package named `holygrail` because the
+  repo dir `the-holy-grail` contains hyphens, which are invalid in Python module names.
+Verified `find_packages()` discovers `holygrail` and `setup.py` parses.
+
+settings.json suggestion: four repos have one (IOPtics, PAB, fronts, bing). Recommended
+and copied **PAB's** `.claude/settings.json` — it is a superset of IOPtics's (adds GitHub
+`WebFetch` domains) and denies `git push/commit/reset/rebase`, matching this project's
+convention that the user performs all git. Note: it allows `conda run -n ocean14` and
+`Bash(rm:*)` is set to ask; the conda env name may need changing for this PypeIt project.
+
 ### 2026-06-20 (Copied skills from IOPtics)
 
 Copied the skills from the IOPtics repository
