@@ -60,16 +60,18 @@ Professor of Astronomy and Astrophysics
 ### Website of org / research group, Google Scholar, or GitHub *(required)*
 - PypeIt: https://github.com/pypeit/PypeIt
 - J. X. Prochaska (SciXplorer): https://scixplorer.org/search?p=1&q=prochaska%2C+j&sort=score+desc&sort=date+desc&d=general
+- https://profxj.github.io/
 
 ### Where did you hear about this program?
-**[TBD — user]** (Q&A 5)
+
+From a colleague who now works at Anthropic (Brice Menard).
 
 ---
 
 ## Project information
 
 ### Project title *(required)*
-The Holy Grail: Blind, Instrument-Agnostic Wavelength Calibration of
+The Holy Grail: Unsupervised, Instrument-Agnostic Wavelength Calibration of
 Astronomical Arc Spectra
 
 ### Scientific field(s) — select all that apply *(required)*
