@@ -2,7 +2,7 @@
 
 ## Goals
 
-This repository will be used to develop the Holy Grail project, which is a set of tools to auto-identify and measure emission lines in arc-line spectra.
+This repository will be used to develop the Holy Grail project, which is a set of tools to automatically identify and measure emission lines in arc-line spectra.
 
 ## Prompts
 
