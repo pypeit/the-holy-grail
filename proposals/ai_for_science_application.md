@@ -1,6 +1,6 @@
 # AI for Science Program — Application Draft
 
-*The Holy Grail: blind, instrument-agnostic wavelength calibration of arc-line spectra*
+*The Holy Grail: An automated approach to the fundamental calibration of astronomical spectra*
 
 > **How to use this file.** Headings below are the **actual Google-Form fields**,
 > in order, each annotated with its word limit. Paste each field's prose into the
@@ -26,8 +26,8 @@ physical wavelengths; bridging the two requires a **wavelength solution**, and
 producing one is one of the most time-consuming, expertise-dependent steps in
 all of optical/infrared astronomy. The standard recipe leans on an "arc" frame —
 an exposure of a calibration lamp whose emission lines sit at known
-wavelengths — but it normally assumes someone has already told the pipeline
-*which lamp* was used and roughly *how* the instrument disperses light. **The
+wavelengths — but it normally requires someone to tell the pipeline
+*which combination of lamps* were used and roughly *how* the instrument disperses light. **The
 Holy Grail project removes those assumptions entirely**: given a completely
 *unlabeled* arc spectrum — no instrument, grating, dispersion, or even lamp
 identity — it (1) **identifies the arc lamp(s)** from the spectrum alone, then
@@ -35,7 +35,8 @@ identity — it (1) **identifies the arc lamp(s)** from the spectrum alone, then
 prior guess. Step 1, *blind lamp identification*, is essentially absent from the
 published literature, making it a genuine open problem; step 2 pushes well
 beyond the current state of the art, which still requires a lamp list and often
-fails without an instrument-specific archive. Solving both yields a single,
+fails without an instrument-specific archived solution previously developed by 
+an experienced spectroscopist. Solving both yields a single,
 transferable, instrument-agnostic calibrator — *one solution to rule them all* —
 that drops into PypeIt (the community-standard reduction pipeline, ~45
 instrument arms) and unlocks high-throughput and archival spectroscopy.
@@ -64,15 +65,14 @@ Professor of Astronomy and Astrophysics
 
 ### Where did you hear about this program?
 
-From a colleague who now works at Anthropic (Brice Menard).
+From a colleague who now works at Anthropic (Brice Ménard).
 
 ---
 
 ## Project information
 
 ### Project title *(required)*
-The Holy Grail: Unsupervised, Instrument-Agnostic Wavelength Calibration of
-Astronomical Arc Spectra
+The Holy Grail: An automated approach to the fundamental calibration of astronomical spectra
 
 ### Scientific field(s) — select all that apply *(required)*
 - [x] **Physics**
@@ -103,8 +103,14 @@ et al. 2018) — direct precedents for the spectral pattern-identification at th
 core of this project.
 
 **Ryan Cooke (Co-I)** — Professor of Astronomy, Durham University; co-founder of
-PypeIt; expert in high-precision spectroscopy and wavelength calibration.
-**[AI/ML experience — TBD, user to supply, Q&A 6.]**
+PypeIt; expert in high-precision spectroscopy and wavelength calibration, with over
+20 years of experience. Brings a strong background in wavelength calibration,
+combined with a track record of applying machine learning to astronomical data, including
+the development of algorithms for spectral line identification and classification.
+Recent works include the application of CNNs to identify rare galaxies and absorption
+features (Cheng & Cooke 2025, 2026) and extract hundreds of absorption line identifications
+in astronomical spectra (Cheng, Cooke & Rudie 2022), combined with the development of
+machine learning models for spectroscopic data reduction.
 
 **Joseph Hennawi (Co-I)** — Professor of Physics, UC Santa Barbara; co-developer
 of PypeIt **[confirm role wording — user]**; expert in quasar and
@@ -128,7 +134,7 @@ since 2025).
 
 ### Links to Google Scholar / professional profiles
 - Prochaska: https://scixplorer.org/search?p=1&q=prochaska%2C+j&sort=score+desc&sort=date+desc&d=general
-- Cooke: https://scixplorer.org/search?p=1&q=cooke%2C+r&sort=score+desc&sort=date+desc&d=general
+- Cooke: https://scixplorer.org/search?p=1&q=orcid%3A0000-0001-7653-5827&sort=date+desc&d=general
 - Hennawi: https://scixplorer.org/search?p=1&q=hennawi%2C+j&sort=score+desc&sort=date+desc&d=general
 
 ---
@@ -139,26 +145,27 @@ since 2025).
 *(Prompt 8 trim — ~395 words; covers question · methodology · outcomes · timeline.)*
 
 **Scientific question.** Wavelength calibration — mapping detector pixels to
-physical wavelengths, `λ = f(pixel)` — gates **every** optical/IR spectroscopic
+physical wavelengths, `λ = f(pixel)` — gates **every** optical/infrared spectroscopic
 reduction: no redshift, abundance, or velocity is trustworthy without it. Its
-bottleneck is *line identification*: assigning each detected arc-lamp peak its
-rest wavelength. This is the historically manual, expertise-intensive step, and
+bottleneck is *line identification*: assigning each detected arc-lamp peak to its
+rest wavelength. This is a historically manual, expertise-intensive step, and
 even modern automated solvers sidestep the hardest part — they must be **told the
 lamp** and given an approximate dispersion or a matching template. Our question:
 can one algorithm calibrate an *entirely unlabeled* arc — no instrument, grating,
 dispersion, or lamp identity — by first **identifying the lamp(s) from the
-spectrum alone** (ThAr / CuAr / HgCdNeAr / OH sky), then **deriving the full
+spectrum alone** (for example, does the lamp contain thorium, argon, copper, mercury,
+or hydroxide lines from Earth's sky, among others), then **deriving the full `λ = f(pixel)`
 solution with no human input**? The first step, *blind lamp identification*, is
 essentially **absent from the published literature** — the leading calibrators
 (RASCAL, Davenport DTW, xwavecal) are step-2-only and assume the lamp is known;
-the nearest ML precedent (SPIT) classifies frame *type*, not lamp species —
+the nearest ML precedent (SPIT - developed by the PI) classifies frame *type*, not lamp species —
 making it our clearest novel contribution.
 
-**Methodology.** Two chained stages, built and evaluated on the existing labelled
+**Methodology.** Two chained stages, built and evaluated on the existing labeled
 PypeIt corpus (~45 instrument arms of raw arcs; 242 solved reference arcs;
 per-ion atomic line lists). **Stage 1 — blind lamp ID (novel):** classify the
 lamp from the detected-peak pattern and coarse spectral features with an ML/LLM
-classifier, trained on the labelled raw arcs plus *synthetic* arcs generated from
+classifier, trained on the labeled raw arcs plus *synthetic* arcs generated from
 the line lists; its output narrows the line list for Stage 2. **Stage 2 — blind
 calibration:** recombine two prior-art paradigms while dropping the priors each
 requires — scale-invariant line-ratio **voting** for `(λ_cen, dispersion)`
@@ -166,12 +173,13 @@ requires — scale-invariant line-ratio **voting** for `(λ_cen, dispersion)`
 by Stage 1 rather than a human; refined with DTW-style **sequence-alignment**
 tolerance to non-linear dispersion *without* DTW's matched-template or amplitude
 dependence; finished with a robust Legendre/RANSAC fit. **Evaluation** reuses
-PypeIt's own gate: per-slit/order `RMS < 0.15 × FWHM` plus the dev-suite's
-instrument-specific Å thresholds, on setups held out by instrument.
+PypeIt's own gate: per-slit/order `RMS < 0.15 × FWHM` plus the PypeIt Development
+Suite's instrument-specific thresholds, on setups held out by instrument.
 
 **Outcomes & deliverables.** (1) an open-source, instrument-agnostic blind
-calibrator integrated into PypeIt; (2) a benchmark report vs. the dev-suite gates
-and the current `holy-grail` baseline; (3) a released labelled dataset +
+calibrator integrated into PypeIt; (2) a benchmark report versus the PypeIt
+Development suite gates
+and the current `holy-grail` baseline; (3) a released labeled dataset +
 train/test splits; (4) a methods paper.
 
 **Timeline (~6 months).** M1: assemble corpus, split by instrument, generate
@@ -194,7 +202,7 @@ Claude (via the Anthropic API) is the reasoning core of both research stages:
    search.
 3. **Agentic experimentation** — a Claude tool-use loop runs the pipeline across
    dev-suite setups, reads the RMS/QA outputs, and proposes parameter and
-   algorithm refinements, iterating against the labelled corpus.
+   algorithm refinements, iterating against the labeled corpus.
 4. **Code generation & PypeIt integration** — Claude writes and refactors the
    classifier, solver, and glue code into `pypeit/core/wavecal/`.
 5. **Literature & line-list synthesis** — Claude distills atomic line lists and
@@ -221,7 +229,7 @@ human from both steps: it reasons over heterogeneous, unlabeled spectral +
 metadata inputs to identify the lamp and to vet solutions — a judgment task no
 existing matcher (RASCAL's Hough/RANSAC, Davenport DTW, PypeIt's parameter-space
 voting) performs — and its agentic loop compresses what is today substantial,
-per-instrument expert tuning into automated iteration over the entire labelled
+per-instrument expert tuning into automated iteration over the entire labeled
 corpus at once. The payoff is a single calibrator that generalizes to unseen
 instruments, rather than one solution hand-tuned per configuration.
 
@@ -256,39 +264,40 @@ PypeIt — the community-standard reduction pipeline used across dozens of
 observatories and ~45 instrument arms — so a success reaches the entire
 user base, not one group. Path to scale: every PypeIt reduction gains hands-off
 calibration, and the same engine unlocks **archival mining** of the millions of
-legacy spectra whose metadata is missing or unreliable.
+legacy spectra whose metadata are missing or unreliable.
 
 **The method generalizes.** "Identify the source from an unlabeled signal, then
 calibrate it against a reference library, with no human prior" is a template
-that recurs far beyond astronomy — mass spectrometry, NMR, Raman and other lab
-spectroscopies, and sensor/instrument calibration generally. A working
+that recurs far beyond astronomy — mass spectrometry, nuclear magnetic resonance,
+Raman and other spectroscopic techniques utilized in laboratories, and sensor/instrument
+calibration more generally. A working
 demonstration is a reusable blueprint for blind pattern-identification +
 calibration problems across the physical sciences (the program's own form lists
 Physics as an eligible field).
 
 **Reproducibility & public data.** All code is open-source and all benchmark
-data is public (the PypeIt dev-suite), so results are independently verifiable
-and the labelled corpus + splits become a community resource.
+data are public (the PypeIt Development suite), so results are independently verifiable
+and the labeled corpus + splits become a community resource.
 
 ### How will you measure success of using Claude? (specific metrics/objectives) — **200 words max** *(required)*
 *(Prompt 6 — ~140 words)*
 
-We use the dev-suite's built-in, objective gates as the benchmark — no new
-ground truth needed:
+We use the PypeIt Development Suite's built-in, objective gates as the benchmark — no new
+ground truth data are needed:
 
 1. **Blind calibration success rate** — fraction of held-out dev-suite setups
    for which the solution passes the per-slit/order acceptance gate
-   (`RMS < 0.15 × FWHM`, plus the instrument-specific Å thresholds) with *no*
+   (`RMS < 0.15 × FWHM`, plus the instrument-specific thresholds) with *no*
    lamp, dispersion, or template prior supplied.
 2. **Lamp-ID accuracy** — classification accuracy on instruments/configurations
    held out of training.
 3. **Baseline delta** — both above vs. PypeIt's current `holy-grail` method and
-   vs. the archive-template workflow it replaces.
+   versus the archive-template workflow it replaces.
 4. **Claude-integration metrics** — LLM-as-judge precision/recall at flagging
    wrong solutions, and credits (tokens) consumed per solved setup trending down
    as caching and model-tiering are tuned.
 
-Target: match or beat the dev-suite RMS gates on a majority of held-out setups
+Target: match or beat the PypeIt Development Suite RMS gates on a majority of held-out setups
 with zero human input.
 
 ---
@@ -318,8 +327,8 @@ line funds roughly **80–100 development rounds**, or fewer rounds run at highe
 dev-suite gates across diverse instruments.
 
 **How it leads to impact:** the credits directly fund the iteration that turns a
-labelled corpus into a working blind calibrator — every dollar buys experiment
-rounds against the dev-suite gates, and the larger agentic-loop allocation buys
+labeled corpus into a working blind calibrator — every dollar buys experiment
+rounds against the PypeIt Development suite gates, and the larger agentic-loop allocation buys
 the search depth that a from-scratch blind solver needs to generalize across
 ~45 instrument arms. Code generation via Claude Code is *not* funded here.
 
@@ -345,11 +354,11 @@ chains *judgment* over heterogeneous, unlabeled scientific data (spectra,
 metadata, plots) with *code* (the solver and its PypeIt integration). Claude is
 uniquely suited because one agent can reason about the spectrum, vet a candidate
 solution, and write the integration — unifying tasks that would otherwise need
-separate bespoke models and hand-built glue.
+separate bespoke models.
 
 **Program fit.** Astronomy/instrumentation sits under the form's **Physics**
 field option, and the work is open-source scientific infrastructure with a
-methodology that transfers to other physical-science calibration problems.
+methodology that transfers to other physical science calibration problems.
 
 **Track record with Anthropic.** The team is an existing Anthropic customer
 (Team account since 2025) and has already used Claude Code in this project's
