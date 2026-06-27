@@ -111,6 +111,13 @@ of PypeIt **[confirm role wording — user]**; expert in quasar and
 intergalactic-medium spectroscopy and large spectroscopic surveys.
 **[AI/ML experience — TBD, user to supply, Q&A 6.]**
 
+**Kyle B. Westfall (Co-I)** - Researcher at UC Observatories, UC Santa Cruz.
+Co-lead developer for PypeIt; funded by the Simons Foundation via their
+Scientific Software Research Faculty Award to develop community-driven software
+for astronomical spectroscopy; member of Astropy leadership, the core Python
+package used by all astronomers.  Expert in processing and analysis of
+spectroscopic, particularly for fiber-based instruments.
+
 The team authored both PypeIt and the prior `arclines` "Holy Grail" prototype
 this project builds on, and is an existing Anthropic customer (Team account
 since 2025).
@@ -125,11 +132,14 @@ since 2025).
   and reference line-list curation; reviews Claude-vetted solutions.
 - **Joseph Hennawi** — Co-I, Professor (UCSB). Cross-instrument evaluation and
   archival application of the resulting calibrator.
+- **Kyle B. Westfall** - Co-I, Researcher (UCO/UCSC). Validation, testing, and
+  PypeIt and Astropy integration
 
 ### Links to Google Scholar / professional profiles
 - Prochaska: https://scixplorer.org/search?p=1&q=prochaska%2C+j&sort=score+desc&sort=date+desc&d=general
 - Cooke: https://scixplorer.org/search?p=1&q=cooke%2C+r&sort=score+desc&sort=date+desc&d=general
 - Hennawi: https://scixplorer.org/search?p=1&q=hennawi%2C+j&sort=score+desc&sort=date+desc&d=general
+- Westfall: https://tinyurl.com/5n6zzwr6
 
 ---
 
