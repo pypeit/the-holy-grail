@@ -6,9 +6,9 @@
 > in order, each annotated with its word limit. Paste each field's prose into the
 > form. **Before pasting, strip the italic `*(Prompt N …)*` scaffolding lines and
 > any `[TBD — user]` / `[confirm — user]` flags** — those are working notes, not
-> answers. Fields still carrying a flag need PI input (see Q&A 3–6 in
-> `claude_prompts/ai_for_science_application.md`). A submission checklist is at the
-> bottom.
+> answers. Fields still carrying a flag need PI input (see Q&A in
+> `claude_prompts/ai_for_science_application_prompts.md`). A submission checklist
+> is at the bottom.
 >
 > ⚠️ **CREDIT-CEILING CONTRADICTION (must resolve before submitting).** The
 > application form PDF (p.1, "About our Process") states **up to $50,000**; the
@@ -159,8 +159,11 @@ physical wavelengths, `λ = f(pixel)` — gates **every** optical/infrared spect
 reduction: no redshift, abundance, or velocity is trustworthy without it. Its
 bottleneck is *line identification*: assigning each detected arc-lamp peak to its
 rest wavelength. This is a historically manual, expertise-intensive step, and
-even modern automated solvers sidestep the hardest part — they must be **told the
-lamp** and given an approximate dispersion or a matching template. Our question:
+even modern "automated" solvers sidestep the hardest part: they must be **told
+the lamp**, given an approximate dispersion or a **manually pre-calibrated
+template**, and remain **brittle, per-instrument algorithms** with failure modes
+that still need human patching — no general, fully automated solution exists. Our
+question:
 can one algorithm calibrate an *entirely unlabeled* arc — no instrument, grating,
 dispersion, or lamp identity — by first **identifying the lamp(s) from the
 spectrum alone** (for example, does the lamp contain thorium, argon, copper, mercury,
@@ -229,19 +232,22 @@ API use* — the credit request covers the API workloads above.
 ### How will Claude significantly accelerate/enhance vs. existing methods? — **200 words max** *(required)*
 *(Prompt 4 — ~150 words)*
 
-Current PypeIt calibration is gated on human expertise: the from-scratch
-`holy-grail` method must be *handed the lamp list* and "can fail
-catastrophically," so production reductions instead rely on instrument-specific
-archive templates that an expert builds per setup through the interactive
-`pypeit_identify` GUI. There is no automated path for a truly unlabeled arc, and
-blind lamp identification has no published solution at all. Claude removes the
-human from both steps: it reasons over heterogeneous, unlabeled spectral +
-metadata inputs to identify the lamp and to vet solutions — a judgment task no
-existing matcher (RASCAL's Hough/RANSAC, Davenport DTW, PypeIt's parameter-space
-voting) performs — and its agentic loop compresses what is today substantial,
-per-instrument expert tuning into automated iteration over the entire labeled
-corpus at once. The payoff is a single calibrator that generalizes to unseen
-instruments, rather than one solution hand-tuned per configuration.
+Today there is **no general, fully automated solution**. Existing "automated"
+methods are partial and brittle: humans must hand-code algorithms per instrument
+(or instrument group), the methods rely on **manually pre-calibrated templates**,
+and they still hit failure modes requiring human intervention and patching. The
+human cost scales with what is known: a few **minutes per spectrum** when the
+lamps *and* their line lists are in hand; **days** of curating and scouring
+atomic databases when the lamps (elements) are known but the line list is not;
+**hours to days** when even the lamp identity is uncertain (usually known — but
+not always). PypeIt is representative: its from-scratch `holy-grail` method must
+be handed the lamp list and "can fail catastrophically," so production leans on
+expert-built archive templates via the interactive `pypeit_identify` GUI. Claude
+removes the human from both steps — reasoning over unlabeled spectra and metadata
+to identify the lamp and vet solutions, a judgment task no matcher (RASCAL, DTW,
+PypeIt's voting) performs — and its agentic loop replaces per-instrument
+hand-tuning with automated iteration over the whole corpus. The payoff: one
+calibrator that generalizes to unseen instruments.
 
 ---
 

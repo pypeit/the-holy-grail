@@ -249,6 +249,11 @@ collecting them up front helps:
    ToS box is acknowledged. Flag anything still needing user input. Produce a
    clean final draft and a short submission checklist keyed to the form fields.
 
+
+9. *(Done — see Logs; one question at Q&A 7.)* **Hennawi comments.** Hennawi says "I would make it more clear that partial automated solutions require humans to code up specific algorithms for each instrument or a group of instruments, that these methods rely on pre-calibrated templates, and that there are still significant failure modes, that require human intervention and patching. Make it clear that this task requires a human a few minutes per spectrum if the lines and lamps are known. With knowledge of the lamps (elements), but without the list of lines, humans have to spend days curating and scouring atomic databases. Without knowledge of the lamps (which we typically have, but not always) the problem would take a human hours or days. And there is no known general solution to this problem that is fully automated and does not require some human intervention, either to curate line lists, identify lines manually, or write brittle algorithms that exploit pre-calibrated  (manually) templates."  Please address these comments in the draft.  If you have any questions, please log them in the Q&A section below and I will answer them.  Log your work.
+
+10. **Final draft.** The draft is now complete.  Please review it and make any necessary changes.  Then, please generate a short submission checklist keyed to the form fields.
+
 ## References (verify program terms here)
 
 - Anthropic — AI for Science Program (announcement):
@@ -298,6 +303,21 @@ The PI/team are as listed in the Inputs needed from the user section.  The budge
 6. **AI/ML credentials for Cooke & Hennawi.** The team description must establish
    AI/ML experience for all listed PIs; their entries in *Inputs* still read
    "ADD YOUR ML HERE." Please supply.
+
+   → Cooke's AI/ML lines supplied (in draft, 2026-06-27). **Hennawi's still
+   read "[AI/ML experience — TBD]"** — please supply. (Westfall was also added
+   as a 4th Co-I.)
+
+7. **Hennawi's human-time figures + lamp framing (Prompt 9).** I folded Hennawi's
+   tiered human-time costs into the "Claude vs. existing" field as the **team's
+   expert characterization** (minutes/spectrum with lamps+lines; days curating
+   atomic databases with lamps-but-no-line-list; hours–days when the lamp is
+   unknown). Two checks: (a) OK to state these as expert estimate without a
+   citation? (b) Hennawi notes the lamp is *usually* known — I kept the headline
+   ambition as the *fully* unlabeled case (per context §0) and framed the value
+   as removing **all** the human steps (even minutes-per-spectrum when the lamp
+   *is* known), not only the rare lamp-unknown case. Confirm that framing, or say
+   if you want lamp-unknown foregrounded differently.
 
 ## Requests
 
@@ -544,3 +564,38 @@ Ran the finalize pass. Findings + fixes:
 Draft is content-complete and within all limits. **Blocking before submission:**
 resolve the $20k/$50k ceiling (Q&A 4); fill email + Org ID (Q&A 3); "where heard"
 (Q&A 5); Cooke/Hennawi AI/ML (Q&A 6); confirm Hennawi's PypeIt role + start date.
+
+### 2026-06-27 (Prompt 9 — addressed Hennawi's comments)
+
+Folded Hennawi's review points into the draft, respecting word caps (re-counted
+after editing):
+
+- **"How Claude accelerates vs. existing"** field (rewritten, now **182/200 words**):
+  led with **"no general, fully automated solution exists"**; characterized
+  existing "automated" methods as **partial and brittle** — humans hand-code
+  algorithms per instrument/group, methods rely on **manually pre-calibrated
+  templates**, and failure modes still need human patching. Added Hennawi's
+  **tiered human-time cost**: ~minutes/spectrum (lamps + line lists known); days
+  curating atomic databases (lamps known, line list not); hours–days (lamp
+  identity uncertain — "usually known, but not always"). Kept the PypeIt-specific
+  baseline and the "Claude removes the human from both steps" payoff.
+- **Project-description "Scientific question"** block: sharpened the
+  state-of-the-art clause to call modern solvers **brittle, per-instrument
+  algorithms** reliant on **manually pre-calibrated templates** with failure
+  modes needing human patching, and to state **no general fully automated
+  solution exists**. Project description now **426/500 words** (still under).
+- Impact field left as-is to avoid triple-repeating the time figures.
+
+These are consistent with the context doc (§5 "can fail catastrophically"; §6
+template-reliant production methods; §8 the human `pypeit_identify` path; §12
+NotImplementedError/"too unstable" paths) — Hennawi's framing matches the code
+state, so nothing was invented.
+
+Also fixed a **stale pointer** in the draft header (the prompts file was renamed
+to `..._prompts.md`) and recorded that **Cooke's AI/ML lines + Westfall (4th
+Co-I)** are now in the draft (user edits), leaving **Hennawi's AI/ML still TBD**.
+
+**Questions logged at Q&A 7** (citation for the time figures; confirm the
+fully-blind headline framing). Next: Prompt 10 (final review + submission
+checklist) — still blocked on Q&A 3 (email/Org ID), 4 (ceiling), 6 (Hennawi
+AI/ML), and the Hennawi role/start-date confirmations.
