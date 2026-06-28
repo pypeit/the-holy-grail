@@ -318,6 +318,7 @@ The PI/team are as listed in the Inputs needed from the user section.  The budge
    as removing **all** the human steps (even minutes-per-spectrum when the lamp
    *is* known), not only the rare lamp-unknown case. Confirm that framing, or say
    if you want lamp-unknown foregrounded differently.
+   A. (a) yes that is fine and (b) yes, confirm that framing.
 
 ## Requests
 
