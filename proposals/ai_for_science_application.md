@@ -27,7 +27,7 @@ producing one is one of the most time-consuming, expertise-dependent steps in
 all of optical/infrared astronomy. The standard recipe leans on an "arc" frame —
 an exposure of a calibration lamp whose emission lines sit at known
 wavelengths — but it normally requires someone to tell the pipeline
-*which combination of lamps* were used and roughly *how* the instrument disperses light. **The
+*which combination of lamps* was used and roughly *how* the instrument disperses light. **The
 Holy Grail project removes those assumptions entirely**: given a completely
 *unlabeled* arc spectrum — no instrument, grating, dispersion, or even lamp
 identity — it (1) **identifies the arc lamp(s)** from the spectrum alone, then
@@ -86,7 +86,7 @@ The Holy Grail: An automated approach to the fundamental calibration of astronom
 ## Research Team
 
 ### Team description — expertise in science **and** AI/ML — **<300 words** *(required)*
-*(Prompt 5 — ~210 words; finalize once Cooke/Hennawi AI/ML lines arrive, Q&A 6)*
+*(Prompt 10 — ~265 words; Hennawi's AI/ML line still TBD (Q&A 6) — keep total < 300.)*
 
 The team pairs deep spectroscopy/instrumentation expertise with hands-on
 machine-learning experience.
@@ -103,26 +103,23 @@ et al. 2018) — direct precedents for the spectral pattern-identification at th
 core of this project.
 
 **Ryan Cooke (Co-I)** — Professor of Astronomy, Durham University; co-founder of
-PypeIt; expert in high-precision spectroscopy and wavelength calibration, with over
-20 years of experience. Brings a strong background in wavelength calibration,
-combined with a track record of applying machine learning to astronomical data, including
-the development of algorithms for spectral line identification and classification.
-Recent works include the application of CNNs to identify rare galaxies and absorption
-features (Cheng & Cooke 2025, 2026) and extract hundreds of absorption line identifications
-in astronomical spectra (Cheng, Cooke & Rudie 2022), combined with the development of
-machine learning models for spectroscopic data reduction.
+PypeIt; 20+ years in high-precision spectroscopy and wavelength calibration. Also
+applies machine learning to astronomical spectra: CNNs to identify rare galaxies
+and absorption features (Cheng & Cooke 2025, 2026) and to extract hundreds of
+absorption-line identifications (Cheng, Cooke & Rudie 2022), plus ML models for
+spectroscopic data reduction.
 
 **Joseph Hennawi (Co-I)** — Professor of Physics, UC Santa Barbara; co-developer
 of PypeIt **[confirm role wording — user]**; expert in quasar and
 intergalactic-medium spectroscopy and large spectroscopic surveys.
 **[AI/ML experience — TBD, user to supply, Q&A 6.]**
 
-**Kyle B. Westfall (Co-I)** - Researcher at UC Observatories, UC Santa Cruz.
-Co-lead developer for PypeIt; funded by the Simons Foundation via their
-Scientific Software Research Faculty Award to develop community-driven software
-for astronomical spectroscopy; member of Astropy leadership, the core Python
-package used by all astronomers.  Expert in processing and analysis of
-spectroscopic, particularly for fiber-based instruments.
+**Kyle B. Westfall (Co-I)** — Researcher, UC Observatories (UCSC); co-lead PypeIt
+developer, funded by the Simons Foundation (Scientific Software Research Faculty
+Award) for community-driven astronomical-spectroscopy software; member of Astropy
+leadership (the core Python package used across astronomy). Expert in
+spectroscopic data processing and analysis, particularly for fiber-based
+instruments.
 
 The team authored both PypeIt and the prior `arclines` "Holy Grail" prototype
 this project builds on, and is an existing Anthropic customer (Team account
@@ -138,8 +135,8 @@ since 2025).
   and reference line-list curation; reviews Claude-vetted solutions.
 - **Joseph Hennawi** — Co-I, Professor (UCSB). Cross-instrument evaluation and
   archival application of the resulting calibrator.
-- **Kyle B. Westfall** - Co-I, Researcher (UCO/UCSC). Validation, testing, and
-  PypeIt and Astropy integration
+- **Kyle B. Westfall** — Co-I, Researcher (UCO/UCSC). Validation, testing, and
+  PypeIt + Astropy integration.
 
 ### Links to Google Scholar / professional profiles
 - Prochaska: https://scixplorer.org/search?p=1&q=prochaska%2C+j&sort=score+desc&sort=date+desc&d=general
@@ -152,7 +149,7 @@ since 2025).
 ## Research Proposal
 
 ### Project description — **<500 words** *(required)*
-*(Prompt 8 trim — ~395 words; covers question · methodology · outcomes · timeline.)*
+*(~426 words; covers question · methodology · outcomes · timeline.)*
 
 **Scientific question.** Wavelength calibration — mapping detector pixels to
 physical wavelengths, `λ = f(pixel)` — gates **every** optical/infrared spectroscopic
@@ -230,7 +227,7 @@ Code generation through Claude Code is *incidental developer tooling, not funded
 API use* — the credit request covers the API workloads above.
 
 ### How will Claude significantly accelerate/enhance vs. existing methods? — **200 words max** *(required)*
-*(Prompt 4 — ~150 words)*
+*(~182 words)*
 
 Today there is **no general, fully automated solution**. Existing "automated"
 methods are partial and brittle: humans must hand-code algorithms per instrument
@@ -363,7 +360,7 @@ N/A — no boxes checked above.
 ## Additional information
 
 ### Anything else for the review committee?
-*(Prompt 7 — optional; trim/keep in Prompt 8)*
+*(optional)*
 
 **Why Claude specifically.** This problem is not a single ML classification — it
 chains *judgment* over heterogeneous, unlabeled scientific data (spectra,
@@ -385,41 +382,48 @@ setup — we are ready to put API credits to work immediately.
 
 ---
 
-## Submission checklist (Prompt 8)
+## Submission checklist (Prompt 10 — final)
 
-**Before pasting:** strip every italic `*(Prompt N …)*` scaffolding line and every
-`[TBD — user]` / `[confirm — user]` flag from the field prose.
+**Step 0 — before pasting:** strip every italic `*(… )*` scaffolding line and every
+`[TBD — user]` / `[confirm — user]` flag from the field prose. They are working
+notes, not answers.
 
-**Word limits — all verified within cap** (counts as of this draft):
+**Word limits — all within cap** (counts current as of this draft):
 
 | Field | Cap | Count |
 |---|---|---|
-| Team description | <300 | ~170 (grows when Cooke/Hennawi AI/ML lines are added — keep < 300) |
-| Project description | <500 | **~395** (trimmed from 602) |
-| How Claude is used | 300 | ~218 |
-| Claude vs. existing methods | 200 | ~142 |
-| Scientific impact | 200 | ~144 |
-| Applications beyond / scale | 200 | ~159 |
-| Measuring success | 200 | ~123 |
+| Team description | <300 | **256** (Hennawi's AI/ML line not yet added — keep total < 300) |
+| Project description | <500 | 426 |
+| How Claude is used | 300 | 218 |
+| Claude vs. existing methods | 200 | 182 |
+| Scientific impact | 200 | 141 |
+| Applications beyond / scale | 200 | 166 |
+| Measuring success | 200 | 128 |
 
 **Form mechanics:**
-- [ ] Email: confirm `xavier@ucolick.org` vs `jxp@ucsc.edu` *(Q&A 3)*
-- [ ] Organization ID (UUID from console.anthropic.com) *(Q&A 3 — required, blank)*
-- [ ] Scientific field(s): **Physics** + **Other: Astronomy** ✓ set
-- [ ] "Where did you hear about this program?" *(Q&A 5 — blank)*
-- [ ] Biosecurity: **None of the above** ✓ (safeguards box → leave blank)
+- [x] Name / org / title / website / Scholar links — filled
+- [x] Scientific field(s): **Physics** + **Other: Astronomy**
+- [x] "Where did you hear about this program?" — *colleague at Anthropic (Brice Ménard)*
+- [x] Biosecurity: **None of the above** (safeguards box → leave blank)
+- [ ] **Email**: confirm `xavier@ucolick.org` vs `jxp@ucsc.edu` *(Q&A 3)*
+- [ ] **Organization ID** (UUID from console.anthropic.com) *(Q&A 3 — required, blank)*
 - [ ] Terms of Service: check **I agree** at submission
 
-**Outstanding PI input (content):**
-- [ ] Cooke & Hennawi AI/ML credentials *(Q&A 6)*
-- [ ] Confirm Hennawi's PypeIt role wording ("co-developer")
-- [ ] Confirm credit amount + **resolve the $50k-vs-$20k ceiling** *(Q&A 4 / ⚠️ top)*
-- [ ] Confirm 6-month start date
+**Outstanding PI input (blocks submission):**
+- [ ] ⚠️ **Resolve the $50k-vs-$20k credit ceiling**, then confirm the $48k request *(Q&A 4)*
+- [ ] **Hennawi's AI/ML credentials** *(Q&A 6 — Cooke's are done; Hennawi still TBD)*
+- [ ] Confirm **Hennawi's PypeIt role wording** ("co-developer")
+- [ ] Confirm the **project start date** (~6-month plan)
+- [ ] Answer **Q&A 7** (OK to state human-time figures as expert estimate; confirm fully-blind framing)
+
+**Done since last checklist:** "where did you hear" filled; Cooke's AI/ML lines
+added; Westfall added as 4th Co-I; Hennawi's comments folded in (Prompt 9);
+team description trimmed back under 300; minor typo/grammar fixes.
 
 **Claims spot-checked against `design/holygrail_context.md`:** blind lamp-ID gap
-(§0, §13, §14.3) ✓; RASCAL/DTW/xwavecal are step-2-only (§14) ✓; SPIT = frame-type
-CNN, 98.7% (§13.3) ✓; 242 reid_arxiv solved arcs + ~45-arm RAW_DATA corpus (§0.1) ✓;
-RMS < 0.15×FWHM acceptance gate (§3, §11) ✓; dev-suite ~224 setups as benchmark
-(§9) ✓. Instrument-arm figures standardized: **~45** (PypeIt/corpus breadth),
-**~224 setups** (dev-suite benchmark); the standalone "~59 arms" was removed to
-avoid an internal clash.
+(§0, §13, §14.3) ✓; RASCAL/DTW/xwavecal step-2-only (§14) ✓; SPIT = frame-type
+CNN, 98.7% (§13.3) ✓; 242 reid_arxiv arcs + ~45-arm RAW_DATA corpus (§0.1) ✓;
+RMS < 0.15×FWHM gate (§3, §11) ✓; dev-suite ~224 setups benchmark (§9) ✓;
+"no general fully-automated solution" / brittle per-instrument templates / failure
+modes (Hennawi, consistent with §5–§8, §12) ✓. Instrument-arm figures: **~45**
+(PypeIt/corpus breadth), **~224 setups** (dev-suite benchmark).

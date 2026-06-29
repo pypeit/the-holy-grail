@@ -252,7 +252,7 @@ collecting them up front helps:
 
 9. *(Done — see Logs; one question at Q&A 7.)* **Hennawi comments.** Hennawi says "I would make it more clear that partial automated solutions require humans to code up specific algorithms for each instrument or a group of instruments, that these methods rely on pre-calibrated templates, and that there are still significant failure modes, that require human intervention and patching. Make it clear that this task requires a human a few minutes per spectrum if the lines and lamps are known. With knowledge of the lamps (elements), but without the list of lines, humans have to spend days curating and scouring atomic databases. Without knowledge of the lamps (which we typically have, but not always) the problem would take a human hours or days. And there is no known general solution to this problem that is fully automated and does not require some human intervention, either to curate line lists, identify lines manually, or write brittle algorithms that exploit pre-calibrated  (manually) templates."  Please address these comments in the draft.  If you have any questions, please log them in the Q&A section below and I will answer them.  Log your work.
 
-10. **Final draft.** The draft is now complete.  Please review it and make any necessary changes.  Then, please generate a short submission checklist keyed to the form fields.
+10. *(Done — see Logs.)* **Final draft.** The draft is now complete.  Please review it as if you were a member of the review committee and make any necessary changes.  Then, please generate a short submission checklist keyed to the form fields.
 
 ## References (verify program terms here)
 
@@ -597,6 +597,43 @@ to `..._prompts.md`) and recorded that **Cooke's AI/ML lines + Westfall (4th
 Co-I)** are now in the draft (user edits), leaving **Hennawi's AI/ML still TBD**.
 
 **Questions logged at Q&A 7** (citation for the time figures; confirm the
-fully-blind headline framing). Next: Prompt 10 (final review + submission
-checklist) — still blocked on Q&A 3 (email/Org ID), 4 (ceiling), 6 (Hennawi
-AI/ML), and the Hennawi role/start-date confirmations.
+fully-blind framing). Next: Prompt 10.
+
+### 2026-06-27 (Prompt 10 — final review (reviewer's lens) + checklist)
+
+Reviewed the full draft as a committee member would, made necessary fixes, and
+regenerated the submission checklist.
+
+**Necessary changes made:**
+- **Team description was over cap (309/300)** after the user's Cooke expansion +
+  Westfall addition. Trimmed Cooke's entry (removed duplicated "wavelength
+  calibration"/"strong background") and tightened Westfall → **256/300**, leaving
+  ~44 words for Hennawi's still-missing AI/ML line.
+- **Typo/grammar:** "processing and analysis of spectroscopic" → "…spectroscopic
+  data"; pitch "combination of lamps *were* used" → "*was* used"; Westfall bullet
+  punctuation/em-dash consistency.
+- **Refreshed stale inline word-count annotations** (team, project description,
+  vs-existing, "anything else") so they no longer state wrong numbers.
+- **Re-counted all capped fields — all within cap:** team 256/300, project
+  426/500, Claude-use 218/300, vs-existing 182/200, impact 141/200, applications
+  166/200, success 128/200.
+- **Regenerated the submission checklist** (now "Prompt 10 — final"): accurate
+  counts; marked done what the user supplied (where-heard = Brice Ménard; Cooke
+  AI/ML; field selection); listed the true blockers.
+
+**Reviewer's-lens assessment (committee perspective):**
+- *Strengths:* clear, genuine gap (blind lamp-ID); credible team that literally
+  authored the target pipeline; objective, pre-existing benchmark (dev-suite RMS
+  gates); concrete Claude usage tied to a justified budget; strong open-source
+  reach.
+- *Weaknesses a reviewer would flag, surfaced for the PI (not silently fixed):*
+  (1) the **$48k request exceeds the help-center's stated $20k ceiling** — the
+  single biggest risk; must be reconciled. (2) **Hennawi's AI/ML credentials
+  blank** — with Prochaska + Cooke (+ Westfall) the AI/ML case is already strong,
+  so consider whether Hennawi needs an AI/ML line at all or should be framed on
+  domain/architecture grounds. (3) "biology/life-sciences priority" program —
+  the broader-impact + Physics-field framing mitigates, but it remains an
+  out-of-headline-domain ask. (4) human-time figures are expert estimates (Q&A 7).
+
+Application is content-complete and within every word limit. Remaining items are
+PI inputs/decisions (checklist "Outstanding PI input"), not drafting.
