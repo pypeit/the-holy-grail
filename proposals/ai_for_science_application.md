@@ -39,7 +39,11 @@ fails without an instrument-specific archived solution previously developed by
 an experienced spectroscopist. Solving both yields a single,
 transferable, instrument-agnostic calibrator — *one solution to rule them all* —
 that drops into PypeIt (the community-standard reduction pipeline, ~45
-instrument arms) and unlocks high-throughput and archival spectroscopy.
+instrument arms) and unlocks high-throughput and archival spectroscopy. Claude
+is the engine we use to *discover and write* this calibrator; the delivered
+algorithm is standalone Python inside PypeIt and runs on its own — no API call at
+reduction time — so it applies to any future arc, from a seen or an entirely
+unseen spectrograph.
 
 ---
 
@@ -170,12 +174,14 @@ essentially **absent from the published literature** — the leading calibrators
 the nearest ML precedent (SPIT - developed by the PI) classifies frame *type*, not lamp species —
 making it our clearest novel contribution.
 
-**Methodology.** Two chained stages, built and evaluated on the existing labeled
-PypeIt corpus (~45 instrument arms of raw arcs; 242 solved reference arcs;
-per-ion atomic line lists). **Stage 1 — blind lamp ID (novel):** classify the
-lamp from the detected-peak pattern and coarse spectral features with an ML/LLM
-classifier, trained on the labeled raw arcs plus *synthetic* arcs generated from
-the line lists; its output narrows the line list for Stage 2. **Stage 2 — blind
+**Methodology.** We use Claude as the research engine to *design, prototype, and
+write* a two-stage algorithm, delivered as standalone Python in PypeIt that runs
+with no LLM or API call at reduction time. Both stages are built and evaluated on
+the existing labeled PypeIt corpus (~45 instrument arms of raw arcs; 242 solved
+reference arcs; per-ion atomic line lists). **Stage 1 — blind lamp ID (novel):** a
+self-contained classifier assigns the lamp(s) from the detected-peak pattern and
+coarse spectral features, trained on the labeled raw arcs plus *synthetic* arcs
+generated from the line lists; its output narrows the line list for Stage 2. **Stage 2 — blind
 calibration:** recombine two prior-art paradigms while dropping the priors each
 requires — scale-invariant line-ratio **voting** for `(λ_cen, dispersion)`
 (PypeIt cross-ratios; RASCAL's Hough) *without* a range/dispersion prior, seeded
@@ -185,8 +191,9 @@ dependence; finished with a robust Legendre/RANSAC fit. **Evaluation** reuses
 PypeIt's own gate: per-slit/order `RMS < 0.15 × FWHM` plus the PypeIt Development
 Suite's instrument-specific thresholds, on setups held out by instrument.
 
-**Outcomes & deliverables.** (1) an open-source, instrument-agnostic blind
-calibrator integrated into PypeIt; (2) a benchmark report versus the PypeIt
+**Outcomes & deliverables.** (1) a standalone, open-source, instrument-agnostic
+blind-calibration algorithm integrated into PypeIt (no LLM at inference); (2) a
+benchmark report versus the PypeIt
 Development suite gates
 and the current `holy-grail` baseline; (3) a released labeled dataset +
 train/test splits; (4) a methods paper.
@@ -199,31 +206,37 @@ held-out setups. M5–6: PypeIt integration + write-up.
 ### How specifically will Claude's capabilities be used? — **300 words max** *(required)*
 *(Prompt 4 — ~230 words)*
 
-Claude (via the Anthropic API) is the reasoning core of both research stages:
+Claude (via the Anthropic API) is the research-and-development engine we use to
+*identify, prototype, and write* the calibration algorithm. The end product is
+standalone Python inside PypeIt that makes **no API call at reduction time** — so
+the credits fund the discovery-and-engineering effort, not a runtime dependency.
 
-1. **Blind lamp identification** — Claude Opus 4.8 reasons over each arc's
-   detected-peak pattern, line-spacing ratios, and FITS metadata — and, via
-   high-resolution vision, the arc plot itself — to hypothesize the lamp
-   species and rank candidate reference line lists.
-2. **Calibration vetting (LLM-as-judge)** — Claude scores candidate
-   pixel→wavelength solutions for physical plausibility (monotonic dispersion,
-   line-ID self-consistency, RMS-vs-FWHM gate), pruning the voting/alignment
-   search.
-3. **Agentic experimentation** — a Claude tool-use loop runs the pipeline across
-   dev-suite setups, reads the RMS/QA outputs, and proposes parameter and
-   algorithm refinements, iterating against the labeled corpus.
+1. **Designing blind lamp identification** — Claude reasons over the labeled arcs
+   (detected-peak patterns, line-spacing ratios, FITS metadata, and — via
+   high-resolution vision — the arc plots) to discover the features that separate
+   lamp species, then designs and codes the self-contained classifier that runs
+   in production.
+2. **Building the calibration solver** — Claude prototypes and refines the
+   voting / sequence-alignment / robust-fit pipeline, using its judgment to score
+   candidate pixel→wavelength solutions for physical plausibility (monotonic
+   dispersion, line-ID self-consistency, RMS-vs-FWHM) and to diagnose failures —
+   feedback it folds back into the algorithm's logic.
+3. **Agentic experimentation** — a Claude tool-use loop runs the evolving
+   algorithm across dev-suite setups, reads the RMS/QA outputs, and proposes
+   parameter and structural refinements, iterating against the labeled corpus
+   until the standalone code generalizes.
 4. **Code generation & PypeIt integration** — Claude writes and refactors the
    classifier, solver, and glue code into `pypeit/core/wavecal/`.
 5. **Literature & line-list synthesis** — Claude distills atomic line lists and
    prior-art methods into structured features and training targets.
 
 *Token/credit scale (feeds Prompt 6):* the dominant consumer is the agentic
-corpus loop (long tool-use traces over ~224 setups × multiple rounds, with
-prompt caching on the shared corpus context, reads ≈0.1× input). LLM-as-judge
-vetting is high-volume but **batchable (50% via the Batch API)** and can tier
-down to Sonnet 4.6 / Haiku 4.5; vision reasoning adds image tokens per arc.
-Code generation through Claude Code is *incidental developer tooling, not funded
-API use* — the credit request covers the API workloads above.
+development loop (long tool-use traces over ~224 setups × multiple rounds, with
+prompt caching on the shared corpus, reads ≈0.1× input). Solution-scoring during
+development is high-volume but **batchable (50% via the Batch API)** and can tier
+to Sonnet 4.6 / Haiku 4.5; vision adds image tokens per arc studied. Code
+generation through Claude Code is *incidental developer tooling, not funded API
+use* — the credits cover the development workloads above.
 
 ### How will Claude significantly accelerate/enhance vs. existing methods? — **200 words max** *(required)*
 *(Prompt 4 — ~150 words)*
@@ -233,14 +246,15 @@ Current PypeIt calibration is gated on human expertise: the from-scratch
 catastrophically," so production reductions instead rely on instrument-specific
 archive templates that an expert builds per setup through the interactive
 `pypeit_identify` GUI. There is no automated path for a truly unlabeled arc, and
-blind lamp identification has no published solution at all. Claude removes the
-human from both steps: it reasons over heterogeneous, unlabeled spectral +
-metadata inputs to identify the lamp and to vet solutions — a judgment task no
-existing matcher (RASCAL's Hough/RANSAC, Davenport DTW, PypeIt's parameter-space
-voting) performs — and its agentic loop compresses what is today substantial,
-per-instrument expert tuning into automated iteration over the entire labeled
-corpus at once. The payoff is a single calibrator that generalizes to unseen
-instruments, rather than one solution hand-tuned per configuration.
+blind lamp identification has no published solution at all. Claude lets us *build*
+that missing path: it reasons over heterogeneous, unlabeled spectral + metadata
+inputs to work out how to identify the lamp and screen candidate solutions — the
+kind of judgment no existing matcher (RASCAL's Hough/RANSAC, Davenport DTW,
+PypeIt's parameter-space voting) encodes — and its agentic loop compresses what is
+today substantial, per-instrument expert tuning into rapid automated iteration
+over the entire labeled corpus at once. We distill that reasoning into a
+**standalone algorithm** that ships in PypeIt and calibrates unseen instruments on
+its own, rather than one solution hand-tuned per configuration.
 
 ---
 
@@ -302,9 +316,10 @@ ground truth data are needed:
    held out of training.
 3. **Baseline delta** — both above vs. PypeIt's current `holy-grail` method and
    versus the archive-template workflow it replaces.
-4. **Claude-integration metrics** — LLM-as-judge precision/recall at flagging
-   wrong solutions, and credits (tokens) consumed per solved setup trending down
-   as caching and model-tiering are tuned.
+4. **Development-efficiency metrics** — precision/recall of Claude's
+   solution-screening during the search (does it correctly flag bad candidates it
+   should discard?), and credits consumed per setup solved during development,
+   trending down as caching and model-tiering are tuned.
 
 Target: match or beat the PypeIt Development Suite RMS gates on a majority of held-out setups
 with zero human input.
@@ -323,9 +338,9 @@ input/output; Batch API at 50%; prompt-cache reads ≈0.1× input):
 
 | Workload | Est. credits | Notes |
 |---|---|---|
-| Agentic experimentation loop over the corpus | ~$32k | Dominant cost. Long tool-use traces over ~224 dev-suite setups × many refinement rounds, run at high effort; shared corpus context is prompt-cached (reads ≈0.1×), so most input is cheap. The primary lever for depth/quality — more rounds and higher reasoning effort directly improve the solver. |
-| LLM-as-judge solution vetting | ~$6k | High volume but **batched (50% off)** and tiered to Sonnet 4.6 / Haiku 4.5. |
-| Lamp-ID reasoning + high-res vision over arcs | ~$5k | Image tokens per arc across training/eval rounds. |
+| Agentic development loop over the corpus | ~$32k | Dominant cost. Long tool-use traces over ~224 dev-suite setups × many refinement rounds, run at high effort; shared corpus context is prompt-cached (reads ≈0.1×), so most input is cheap. The primary lever for depth/quality — more rounds and higher reasoning effort directly improve the algorithm Claude writes. |
+| Solution-screening during development (Claude-as-judge) | ~$6k | High volume but **batched (50% off)** and tiered to Sonnet 4.6 / Haiku 4.5. |
+| Lamp-ID feature discovery + high-res vision over arcs | ~$5k | Image tokens per arc studied while designing the standalone classifier. |
 | Literature & line-list synthesis, misc. | ~$2k | |
 | Contingency | ~$3k | |
 
@@ -336,10 +351,12 @@ line funds roughly **80–100 development rounds**, or fewer rounds run at highe
 dev-suite gates across diverse instruments.
 
 **How it leads to impact:** the credits directly fund the iteration that turns a
-labeled corpus into a working blind calibrator — every dollar buys experiment
-rounds against the PypeIt Development suite gates, and the larger agentic-loop allocation buys
-the search depth that a from-scratch blind solver needs to generalize across
-~45 instrument arms. Code generation via Claude Code is *not* funded here.
+labeled corpus into a working, standalone blind-calibration algorithm — every
+dollar buys experiment rounds against the PypeIt Development suite gates, and the
+larger agentic-loop allocation buys the search depth that a from-scratch blind
+solver needs to generalize across ~45 instrument arms and to arms it has never
+seen. The delivered algorithm runs inside PypeIt with no API dependency; code
+generation via Claude Code is *not* funded here.
 
 ---
 
@@ -361,9 +378,10 @@ N/A — no boxes checked above.
 **Why Claude specifically.** This problem is not a single ML classification — it
 chains *judgment* over heterogeneous, unlabeled scientific data (spectra,
 metadata, plots) with *code* (the solver and its PypeIt integration). Claude is
-uniquely suited because one agent can reason about the spectrum, vet a candidate
-solution, and write the integration — unifying tasks that would otherwise need
-separate bespoke models.
+uniquely suited because one agent can reason about the spectra, work out and
+screen candidate solutions, and write the resulting algorithm — unifying
+development tasks that would otherwise need separate bespoke models, and yielding
+a standalone tool rather than an ongoing runtime LLM dependency.
 
 **Program fit.** Astronomy/instrumentation sits under the form's **Physics**
 field option, and the work is open-source scientific infrastructure with a
@@ -388,12 +406,12 @@ setup — we are ready to put API credits to work immediately.
 | Field | Cap | Count |
 |---|---|---|
 | Team description | <300 | ~170 (grows when Cooke/Hennawi AI/ML lines are added — keep < 300) |
-| Project description | <500 | **~395** (trimmed from 602) |
-| How Claude is used | 300 | ~218 |
-| Claude vs. existing methods | 200 | ~142 |
+| Project description | <500 | **~428** (standalone-algorithm framing added) |
+| How Claude is used | 300 | ~278 (reframed: Claude builds a standalone algorithm) |
+| Claude vs. existing methods | 200 | ~153 |
 | Scientific impact | 200 | ~144 |
 | Applications beyond / scale | 200 | ~159 |
-| Measuring success | 200 | ~123 |
+| Measuring success | 200 | ~136 |
 
 **Form mechanics:**
 - [ ] Email: confirm `xavier@ucolick.org` vs `jxp@ucsc.edu` *(Q&A 3)*
