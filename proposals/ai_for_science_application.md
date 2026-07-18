@@ -10,12 +10,20 @@
 > `claude_prompts/ai_for_science_application.md`). A submission checklist is at the
 > bottom.
 >
-> ⚠️ **CREDIT-CEILING CONTRADICTION (must resolve before submitting).** The
-> application form PDF (p.1, "About our Process") states **up to $50,000**; the
-> official help-center article states **up to $20,000** over a **6-month period**.
-> The program's own materials disagree. This draft requests **$48k** on the form's
-> $50k figure — **confirm the real ceiling first; if $20k is current, rescale the
-> budget.** (Q&A 4 / Requests.)
+> ✅ **CREDIT CEILING RESOLVED: $50,000.** The current live form
+> (`proposals/application_form.pdf`, captured 2026-07-17) states: *"The maximum
+> award for the AI for Science program is $50,000 in credits."* The earlier
+> help-center $20k figure is superseded; the **$48k request stands**. The form
+> also encourages **~6-month timelines** (matching our plan) and adds: *"if your
+> project requires Claude Science credits, please indicate how much money in
+> credits is needed across Claude Science and Claude Code"* — PI may optionally
+> add a Claude Code line to the budget answer (currently declared not-funded).
+>
+> ⚠️ **1–2 SENTENCE LIMITS.** Six form questions specify **"(1–2 sentences,
+> N words max)"**: Claude-use (300 w), Claude-vs-existing (200 w), scientific
+> impact (200 w), applications beyond (200 w), measuring success (200 w), and
+> biosecurity safeguards (N/A). Those answers below are each condensed to
+> **two sentences** (Prompt 11) — do not paste multi-paragraph text into them.
 
 ---
 
@@ -83,7 +91,9 @@ The Holy Grail: An automated approach to the fundamental calibration of astronom
 - [x] **Other:** Astronomy / astronomical instrumentation
 
 ### Organization ID (UUID, from console.anthropic.com/settings/organization) *(required)*
-**[TBD — user]** (Q&A 3)
+`aa19f221-1347-4bf1-9078-c0508e3e4ce3` *(as entered in the in-progress form
+draft, `proposals/application_form.pdf` p.3 — confirm it matches the org the
+credits should attach to, Q&A 3)*
 
 ---
 
@@ -203,160 +213,141 @@ synthetic arcs. M1–2: lamp-ID prototype. M2–4: blind-calibration prototype +
 Claude-as-judge vetting. M4–5: evaluate against the dev-suite thresholds on
 held-out setups. M5–6: PypeIt integration + write-up.
 
-### How specifically will Claude's capabilities be used? — **300 words max** *(required)*
-*(Prompt 4 — ~230 words)*
+### How specifically will Claude's capabilities be used? — **1–2 sentences, 300 words max** *(required)*
+*(Prompt 11 — condensed to 2 sentences, ~168 words)*
 
-Claude (via the Anthropic API) is the research-and-development engine we use to
-*identify, prototype, and write* the calibration algorithm. The end product is
-standalone Python inside PypeIt that makes **no API call at reduction time** — so
-the credits fund the discovery-and-engineering effort, not a runtime dependency.
+Claude (via the Anthropic API) is the research-and-development engine we will
+use to *design, prototype, and write* a standalone two-stage blind
+wavelength-calibration algorithm for PypeIt: Claude will reason over our labeled
+arc corpus (detected-peak patterns, line-spacing ratios, FITS metadata, and —
+via high-resolution vision — the arc plots) to design a self-contained
+lamp-identification classifier; prototype and refine the
+voting/sequence-alignment/robust-fit calibration solver; drive an agentic
+tool-use loop that runs the evolving algorithm across ~224 PypeIt Development
+Suite setups, reads the RMS/QA outputs, and folds diagnosed failures back into
+the code; screen candidate pixel→wavelength solutions for physical plausibility
+as an LLM judge (batched via the Batch API and tiered to smaller models); and
+synthesize atomic line lists and prior-art methods into structured features and
+training targets. The delivered product is standalone Python integrated into
+PypeIt's wavelength-calibration module with **no LLM or API call at reduction
+time**, so the credits fund these discovery-and-engineering workloads — the
+prompt-cached agentic development loop being the dominant consumer — rather
+than a runtime dependency.
 
-1. **Designing blind lamp identification** — Claude reasons over the labeled arcs
-   (detected-peak patterns, line-spacing ratios, FITS metadata, and — via
-   high-resolution vision — the arc plots) to discover the features that separate
-   lamp species, then designs and codes the self-contained classifier that runs
-   in production.
-2. **Building the calibration solver** — Claude prototypes and refines the
-   voting / sequence-alignment / robust-fit pipeline, using its judgment to score
-   candidate pixel→wavelength solutions for physical plausibility (monotonic
-   dispersion, line-ID self-consistency, RMS-vs-FWHM) and to diagnose failures —
-   feedback it folds back into the algorithm's logic.
-3. **Agentic experimentation** — a Claude tool-use loop runs the evolving
-   algorithm across dev-suite setups, reads the RMS/QA outputs, and proposes
-   parameter and structural refinements, iterating against the labeled corpus
-   until the standalone code generalizes.
-4. **Code generation & PypeIt integration** — Claude writes and refactors the
-   classifier, solver, and glue code into `pypeit/core/wavecal/`.
-5. **Literature & line-list synthesis** — Claude distills atomic line lists and
-   prior-art methods into structured features and training targets.
+### How will Claude significantly accelerate/enhance vs. existing methods? — **1–2 sentences, 200 words max** *(required)*
+*(Prompt 11 — condensed to 2 sentences, ~157 words)*
 
-*Token/credit scale (feeds Prompt 6):* the dominant consumer is the agentic
-development loop (long tool-use traces over ~224 setups × multiple rounds, with
-prompt caching on the shared corpus, reads ≈0.1× input). Solution-scoring during
-development is high-volume but **batchable (50% via the Batch API)** and can tier
-to Sonnet 4.6 / Haiku 4.5; vision adds image tokens per arc studied. Code
-generation through Claude Code is *incidental developer tooling, not funded API
-use* — the credits cover the development workloads above.
-
-### How will Claude significantly accelerate/enhance vs. existing methods? — **200 words max** *(required)*
-*(Prompt 4 — ~150 words)*
-
-Current PypeIt calibration is gated on human expertise: the from-scratch
-`holy-grail` method must be *handed the lamp list* and "can fail
-catastrophically," so production reductions instead rely on instrument-specific
-archive templates that an expert builds per setup through the interactive
-`pypeit_identify` GUI. There is no automated path for a truly unlabeled arc, and
-blind lamp identification has no published solution at all. Claude lets us *build*
-that missing path: it reasons over heterogeneous, unlabeled spectral + metadata
-inputs to work out how to identify the lamp and screen candidate solutions — the
-kind of judgment no existing matcher (RASCAL's Hough/RANSAC, Davenport DTW,
-PypeIt's parameter-space voting) encodes — and its agentic loop compresses what is
-today substantial, per-instrument expert tuning into rapid automated iteration
-over the entire labeled corpus at once. We distill that reasoning into a
-**standalone algorithm** that ships in PypeIt and calibrates unseen instruments on
-its own, rather than one solution hand-tuned per configuration.
+No general, fully automated wavelength-calibration solution exists today:
+"automated" methods are partial and brittle — humans hand-code algorithms per
+instrument (or group of instruments), production reductions rely on manually
+pre-calibrated templates built per setup through PypeIt's interactive
+`pypeit_identify` GUI, remaining failure modes need human patching, and even
+with the lamps and line lists known an expert spends minutes per spectrum, days
+curating atomic databases when the line list is missing, and hours-to-days when
+the lamp identity itself is uncertain. Claude removes the human from every one
+of those steps — reasoning over heterogeneous, unlabeled spectral and metadata
+inputs to identify the lamp and screen candidate solutions, a judgment task no
+existing matcher (RASCAL's Hough/RANSAC, Davenport DTW, PypeIt's
+parameter-space voting) encodes — and its agentic loop compresses today's
+substantial per-instrument expert tuning into rapid automated iteration over
+the entire labeled corpus, distilled into a **standalone algorithm** that ships
+in PypeIt and calibrates unseen instruments on its own.
 
 ---
 
 ## Impact Assessment
 
-### Potential scientific impact if successful — **200 words max** *(required)*
-*(Prompt 2 — ~150 words)*
+### Potential scientific impact if successful — **1–2 sentences, 200 words max** *(required)*
+*(Prompt 11 — condensed to 2 sentences, ~123 words)*
 
-Wavelength calibration is a universal prerequisite for spectroscopy, and its
-line-identification step remains a per-instrument, expert-tuned chore that costs
-astronomer and pipeline-developer time across the field. A solver that works on
-an *unlabeled* arc — identifying the lamp and deriving the dispersion with no
-human input or instrument-specific prior — would be **transferable and
-instrument-agnostic by construction**: one calibrator that drops into PypeIt
-(the community-standard open-source reduction pipeline, already validated across
-~224 dev-suite setups) and generalizes to instruments it has never
-seen, including future and archival data with missing or unreliable metadata.
-This removes a recurring barrier to **high-throughput** reductions (modern
-multi-object and IFU spectrographs produce hundreds-to-thousands of spectra per
-exposure, each needing a solution) and to mining **heterogeneous archives** at
-scale. It also closes a genuine methodological gap — blind lamp identification —
-establishing a reusable template for blind pattern-identification-plus-
-calibration problems beyond astronomy.
+A solver that calibrates a fully *unlabeled* arc — identifying the lamp and
+deriving the dispersion solution with no human input or instrument-specific
+prior — would be **transferable and instrument-agnostic by construction**: one
+calibrator that drops into PypeIt (the community-standard open-source reduction
+pipeline, already validated across ~224 dev-suite setups) and generalizes to
+instruments it has never seen, including future spectrographs and archival data
+with missing or unreliable metadata. Success removes a recurring expert
+bottleneck to **high-throughput** reduction (modern multi-object and IFU
+spectrographs produce hundreds-to-thousands of spectra per exposure, each
+needing a wavelength solution) and to mining **heterogeneous archives** at
+scale, while closing a genuine methodological gap — blind lamp identification —
+as a reusable template for blind pattern-identification-plus-calibration
+problems beyond astronomy.
 
-### Applications beyond pure discovery / societal benefit / paths to scale — **200 words max** *(required)*
-*(Prompt 7 — ~180 words)*
+### Applications beyond pure discovery / societal benefit / paths to scale — **1–2 sentences, 200 words max** *(required)*
+*(Prompt 11 — condensed to 2 sentences, ~117 words)*
 
-**Open-source infrastructure, immediate reach.** The calibrator ships inside
-PypeIt — the community-standard reduction pipeline used across dozens of
-observatories and ~45 instrument arms — so a success reaches the entire
-user base, not one group. Path to scale: every PypeIt reduction gains hands-off
-calibration, and the same engine unlocks **archival mining** of the millions of
-legacy spectra whose metadata are missing or unreliable.
+Yes — the calibrator ships inside PypeIt, open-source infrastructure used
+across dozens of observatories and ~45 instrument arms, so every PypeIt
+reduction gains hands-off calibration, the same engine unlocks **archival
+mining** of the millions of legacy spectra whose metadata are missing or
+unreliable, and all code and benchmark data (the PypeIt Development Suite)
+remain public and independently verifiable, with the labeled corpus and splits
+released as a community resource. The underlying method — identify the source
+from an unlabeled signal, then calibrate it against a reference library with no
+human prior — is a reusable blueprint that recurs far beyond astronomy, in mass
+spectrometry, nuclear magnetic resonance, Raman and other laboratory
+spectroscopies, and sensor/instrument calibration generally.
 
-**The method generalizes.** "Identify the source from an unlabeled signal, then
-calibrate it against a reference library, with no human prior" is a template
-that recurs far beyond astronomy — mass spectrometry, nuclear magnetic resonance,
-Raman and other spectroscopic techniques utilized in laboratories, and sensor/instrument
-calibration more generally. A working
-demonstration is a reusable blueprint for blind pattern-identification +
-calibration problems across the physical sciences (the program's own form lists
-Physics as an eligible field).
+### How will you measure success of using Claude? (specific metrics/objectives) — **1–2 sentences, 200 words max** *(required)*
+*(Prompt 11 — condensed to 2 sentences, ~118 words)*
 
-**Reproducibility & public data.** All code is open-source and all benchmark
-data are public (the PypeIt Development suite), so results are independently verifiable
-and the labeled corpus + splits become a community resource.
-
-### How will you measure success of using Claude? (specific metrics/objectives) — **200 words max** *(required)*
-*(Prompt 6 — ~140 words)*
-
-We use the PypeIt Development Suite's built-in, objective gates as the benchmark — no new
-ground truth data are needed:
-
-1. **Blind calibration success rate** — fraction of held-out dev-suite setups
-   for which the solution passes the per-slit/order acceptance gate
-   (`RMS < 0.15 × FWHM`, plus the instrument-specific thresholds) with *no*
-   lamp, dispersion, or template prior supplied.
-2. **Lamp-ID accuracy** — classification accuracy on instruments/configurations
-   held out of training.
-3. **Baseline delta** — both above vs. PypeIt's current `holy-grail` method and
-   versus the archive-template workflow it replaces.
-4. **Development-efficiency metrics** — precision/recall of Claude's
-   solution-screening during the search (does it correctly flag bad candidates it
-   should discard?), and credits consumed per setup solved during development,
-   trending down as caching and model-tiering are tuned.
-
-Target: match or beat the PypeIt Development Suite RMS gates on a majority of held-out setups
-with zero human input.
+We will benchmark against the PypeIt Development Suite's built-in, objective
+gates — no new ground truth needed — with two primary metrics: the **blind
+calibration success rate** (fraction of held-out setups whose solution passes
+the per-slit/order acceptance gate, `RMS < 0.15 × FWHM` plus the
+instrument-specific thresholds, with *no* lamp, dispersion, or template prior
+supplied) and **lamp-ID accuracy** on instruments/configurations held out of
+training, each compared against PypeIt's current `holy-grail` method and the
+archive-template workflow it replaces. Secondary development-efficiency metrics
+are the precision/recall of Claude's solution-screening (does it correctly
+discard bad candidates?) and credits consumed per solved setup, with the
+overall objective of matching or beating the dev-suite RMS gates on a majority
+of held-out setups with zero human input.
 
 ---
 
 ## Resource Requirements
 
-### Anticipated API credit amount + how it leads to impact *(required)*
-*(Prompt 6 — **proposed $48,000**. ⚠️ Ceiling is contradictory: form says $50k,
-help-center says $20k — confirm before submitting; if $20k, rescale. Q&A 4.)*
+### Anticipated API credit amount + how it leads to impact *(required — no sentence limit on this field)*
+*(Prompt 6 — **proposed $48,000**. ✅ Ceiling resolved: the live form states the
+maximum award is **$50,000**. Note the form adds: if the project requires
+**Claude Science** credits, indicate the split across Claude Science and
+**Claude Code** — the answer below currently declares Claude Code not-funded;
+PI may choose to request a Claude Code line instead. Prompt 12: budget table
+converted to plain text — the form field cannot render a table; the answer below
+is paste-safe as-is.)*
 
-We anticipate **~$48,000** in API credits over the project, mapped to the
-Prompt-4 workloads (Claude Opus 4.8 unless noted; prices $5/$25 per 1M
-input/output; Batch API at 50%; prompt-cache reads ≈0.1× input):
+We anticipate ~$48,000 in API credits over the project (Claude Opus 4.8 unless
+noted; prices $5/$25 per 1M input/output tokens; Batch API at 50%; prompt-cache
+reads ≈0.1× input), allocated across five workloads:
 
-| Workload | Est. credits | Notes |
-|---|---|---|
-| Agentic development loop over the corpus | ~$32k | Dominant cost. Long tool-use traces over ~224 dev-suite setups × many refinement rounds, run at high effort; shared corpus context is prompt-cached (reads ≈0.1×), so most input is cheap. The primary lever for depth/quality — more rounds and higher reasoning effort directly improve the algorithm Claude writes. |
-| Solution-screening during development (Claude-as-judge) | ~$6k | High volume but **batched (50% off)** and tiered to Sonnet 4.6 / Haiku 4.5. |
-| Lamp-ID feature discovery + high-res vision over arcs | ~$5k | Image tokens per arc studied while designing the standalone classifier. |
-| Literature & line-list synthesis, misc. | ~$2k | |
-| Contingency | ~$3k | |
+- ~$32k — the agentic development loop over the corpus, the dominant cost: long
+  tool-use traces over ~224 dev-suite setups across many refinement rounds, run
+  at high effort, with the shared corpus context prompt-cached (reads ≈0.1×) so
+  most input is cheap. This line is the primary lever for depth and quality —
+  more rounds and higher reasoning effort directly improve the algorithm Claude
+  writes.
+- ~$6k — solution-screening during development (Claude-as-judge): high volume,
+  but batched (50% off) and tiered to Sonnet 4.6 / Haiku 4.5.
+- ~$5k — lamp-ID feature discovery with high-resolution vision over the arcs:
+  image tokens per arc studied while designing the standalone classifier.
+- ~$2k — literature and line-list synthesis, plus miscellaneous use.
+- ~$3k — contingency.
 
-**Order-of-magnitude check:** one full agentic pass over 224 setups at ~200k
-(largely cached) input + ~50k output tokens each ≈ $0.3–0.4k/round; the ~$32k
-line funds roughly **80–100 development rounds**, or fewer rounds run at higher
-(`xhigh`/`max`) effort — the depth needed to push blind calibration past the
-dev-suite gates across diverse instruments.
+Order-of-magnitude check: one full agentic pass over 224 setups at ~200k
+(largely cached) input + ~50k output tokens each ≈ $0.3–0.4k/round, so the ~$32k
+line funds roughly 80–100 development rounds, or fewer rounds run at higher
+effort — the depth needed to push blind calibration past the dev-suite gates
+across diverse instruments.
 
-**How it leads to impact:** the credits directly fund the iteration that turns a
+How it leads to impact: the credits directly fund the iteration that turns a
 labeled corpus into a working, standalone blind-calibration algorithm — every
-dollar buys experiment rounds against the PypeIt Development suite gates, and the
-larger agentic-loop allocation buys the search depth that a from-scratch blind
-solver needs to generalize across ~45 instrument arms and to arms it has never
-seen. The delivered algorithm runs inside PypeIt with no API dependency; code
-generation via Claude Code is *not* funded here.
+dollar buys experiment rounds against the PypeIt Development Suite gates, and
+the larger agentic-loop allocation buys the search depth that a from-scratch
+blind solver needs to generalize across ~45 instrument arms and to arms it has
+never seen. The delivered algorithm runs inside PypeIt with no API dependency;
+code generation via Claude Code is not funded here.
 
 ---
 
@@ -365,8 +356,8 @@ generation via Claude Code is *not* funded here.
 ### Does your research involve pathogen/virology, drug-resistance, toxicology, or synthetic biology? *(required)*
 - [x] **None of the above** (astronomical instrumentation)
 
-### Biosecurity safeguards
-N/A — no boxes checked above.
+### Biosecurity safeguards — **1–2 sentences, 200 words max** *(only if a box above is checked)*
+N/A — no boxes checked above; leave blank on the form.
 
 ---
 
@@ -396,36 +387,49 @@ setup — we are ready to put API credits to work immediately.
 
 ---
 
-## Submission checklist (Prompt 8)
+## Submission checklist (updated at Prompt 11)
 
 **Before pasting:** strip every italic `*(Prompt N …)*` scaffolding line and every
 `[TBD — user]` / `[confirm — user]` flag from the field prose.
 
-**Word limits — all verified within cap** (counts as of this draft):
+**Sentence limits (Prompt 11):** the form marks six questions
+"**(1–2 sentences, N words max)**" — Claude-use, Claude-vs-existing, scientific
+impact, applications beyond, measuring success, biosecurity safeguards. All are
+now **exactly 2 sentences** (safeguards = N/A, left blank). The team, project
+description, key-members, and credit-amount fields carry **no** sentence limit.
 
-| Field | Cap | Count |
-|---|---|---|
-| Team description | <300 | ~170 (grows when Cooke/Hennawi AI/ML lines are added — keep < 300) |
-| Project description | <500 | **~428** (standalone-algorithm framing added) |
-| How Claude is used | 300 | ~278 (reframed: Claude builds a standalone algorithm) |
-| Claude vs. existing methods | 200 | ~153 |
-| Scientific impact | 200 | ~144 |
-| Applications beyond / scale | 200 | ~159 |
-| Measuring success | 200 | ~136 |
+**Word limits** (counted at Prompt 11):
 
-**Form mechanics:**
-- [ ] Email: confirm `xavier@ucolick.org` vs `jxp@ucsc.edu` *(Q&A 3)*
-- [ ] Organization ID (UUID from console.anthropic.com) *(Q&A 3 — required, blank)*
-- [ ] Scientific field(s): **Physics** + **Other: Astronomy** ✓ set
-- [ ] "Where did you hear about this program?" *(Q&A 5 — blank)*
-- [ ] Biosecurity: **None of the above** ✓ (safeguards box → leave blank)
+| Field | Cap | Count | Sentences |
+|---|---|---|---|
+| Team description | <300 | ⚠️ **~428 — OVER CAP** (grew with Hennawi/Westfall additions; PI must trim ~130 words) | n/a |
+| Project description | <500 | ~449 ✓ | n/a |
+| How Claude is used | 300 | ~167 ✓ | 2 ✓ |
+| Claude vs. existing methods | 200 | ~156 ✓ | 2 ✓ |
+| Scientific impact | 200 | ~121 ✓ | 2 ✓ |
+| Applications beyond / scale | 200 | ~116 ✓ | 2 ✓ |
+| Measuring success | 200 | ~120 ✓ | 2 ✓ |
+
+**Form mechanics** (checked against the in-progress form draft,
+`proposals/application_form.pdf`, captured 2026-07-17):
+- [x] Email: form draft is under **xavier@ucolick.org** — confirm credits attach
+      to the right org regardless *(Q&A 3)*
+- [x] Organization ID: `aa19f221-1347-4bf1-9078-c0508e3e4ce3` entered ✓
+- [x] Scientific field(s): **Physics** + **Other: Astronomy** ✓ (checked in form)
+- [ ] "Where did you hear…": form draft says **"In Anthropic's website"**, but
+      Q&A 5 answer was **Brice Ménard** — reconcile (a personal referral may
+      serve the application better)
+- [x] Credit ceiling: **$50,000 confirmed on the live form** — $48k request stands
+- [ ] Biosecurity: check **None of the above** (safeguards box → leave blank)
 - [ ] Terms of Service: check **I agree** at submission
 
 **Outstanding PI input (content):**
-- [ ] Cooke & Hennawi AI/ML credentials *(Q&A 6)*
-- [ ] Confirm Hennawi's PypeIt role wording ("co-developer")
-- [ ] Confirm credit amount + **resolve the $50k-vs-$20k ceiling** *(Q&A 4 / ⚠️ top)*
-- [ ] Confirm 6-month start date
+- [ ] ⚠️ **Trim team description below 300 words** (currently ~428)
+- [ ] Decide whether to state a **Claude Science / Claude Code credit split**
+      (new form language) or keep "Claude Code not funded"
+- [ ] Confirm 6-month start date (form encourages ~6-month timelines ✓)
+- [ ] Project title in form draft is truncated ("…An automated approach to the") —
+      make sure the full title pasted
 
 **Claims spot-checked against `design/holygrail_context.md`:** blind lamp-ID gap
 (§0, §13, §14.3) ✓; RASCAL/DTW/xwavecal are step-2-only (§14) ✓; SPIT = frame-type

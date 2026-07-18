@@ -254,6 +254,10 @@ collecting them up front helps:
 
 10. *(Done — see Logs.)* **Final draft.** The draft is now complete.  Please review it as if you were a member of the review committee and make any necessary changes.  Then, please generate a short submission checklist keyed to the form fields.
 
+11. *(Done — see Logs.)* Several of the final items insist on the text being only 1-2 sentences.  Please make sure to adhere to this requirement.  Modify the application to adhere to this requirement.  Log your work.
+
+12. *(Done — see Logs.)* The application can't take the Table you have generated for the credit amount.  Please modify the application to remove the table.  Log your work.
+
 ## References (verify program terms here)
 
 - Anthropic — AI for Science Program (announcement):
@@ -297,6 +301,10 @@ The PI/team are as listed in the Inputs needed from the user section.  The budge
    while the **form PDF says $50k**. The $48k request is only valid if the form's
    $50k is current — **PI must resolve this before submitting**; if the cap is
    $20k, rescale the budget.
+
+   → ✅ **Resolved (Prompt 11, 2026-07-17):** the current live form
+   (`proposals/application_form.pdf`) states "The maximum award for the AI for
+   Science program is **$50,000** in credits." The $48k request stands.
 
 5. **"Where did you hear about this program?"** What should this field say?
 
@@ -637,3 +645,52 @@ regenerated the submission checklist.
 
 Application is content-complete and within every word limit. Remaining items are
 PI inputs/decisions (checklist "Outstanding PI input"), not drafting.
+
+### 2026-07-17 (Prompt 11 — enforced the form's "1–2 sentences" limits)
+
+Read the fresh form snapshot the user supplied (`proposals/application_form.pdf`,
+an in-progress draft of the live Google Form). It shows **six questions marked
+"(1–2 sentences, N words max)"**: Claude-use (300 w), Claude-vs-existing (200 w),
+scientific impact (200 w), applications beyond (200 w), measuring success
+(200 w), and biosecurity safeguards (N/A for us). **Condensed each of the five
+applicable answers to exactly two (dense) sentences**, preserving the key
+content — the five Claude workloads + no-LLM-at-runtime framing; Hennawi's
+tiered human-time costs and the "partial/brittle automation" framing (Prompt 9);
+the ~224-setup benchmark, RMS < 0.15×FWHM gate, and lamp-ID metrics. New counts:
+167/300, 156/200, 121/200, 116/200, 120/200 words. The project description,
+team, key-members, and credit-amount fields carry **no** sentence limit and were
+left in their multi-paragraph form.
+
+Bonus facts the new PDF settled, folded into the draft + checklist:
+
+- ✅ **$50,000 ceiling confirmed** on the live form ("The maximum award … is
+  $50,000 in credits") — the Prompt-8 $20k/$50k contradiction is resolved; the
+  **$48k request stands** (updated the draft's header warning and Q&A 4).
+- **Organization ID** now known from the form draft
+  (`aa19f221-1347-4bf1-9078-c0508e3e4ce3`) — filled into the draft (Q&A 3).
+- Form draft is being filled under **xavier@ucolick.org**.
+- New form language: if the project requires **Claude Science** credits, state
+  the split across **Claude Science and Claude Code** — flagged as a PI decision
+  (the budget currently declares Claude Code not-funded).
+- Form explicitly encourages **~6-month timelines** — matches our plan.
+
+**⚠️ New blockers flagged (not fixed — PI decisions):** (1) the **team
+description is now ~428 words vs. the <300 cap** (grew with the Hennawi/Westfall
+additions) — needs a ~130-word trim; (2) the form draft's "Where did you hear"
+says *"In Anthropic's website"* while Q&A 5 said *Brice Ménard* — reconcile;
+(3) the project title in the form draft appears truncated — paste the full title.
+
+### 2026-07-17 (Prompt 12 — removed the budget table from the credit-amount answer)
+
+The Google Form's credit-amount field is a plain-text box that cannot render a
+markdown table, so the per-workload budget table in the Resource Requirements
+answer was converted to prose + a plain dash list (one line per workload:
+~$32k agentic development loop, ~$6k Claude-as-judge screening, ~$5k
+vision/lamp-ID feature discovery, ~$2k literature/line-list synthesis, ~$3k
+contingency). All content was preserved — the $48k total, per-line rationale,
+the order-of-magnitude check (~80–100 development rounds), and the
+how-it-leads-to-impact paragraph. Also stripped the bold/backtick markdown from
+that answer so it is **paste-safe as-is** (note: the form-draft PDF shows
+literal `**` markers were pasted into the team-description field earlier — worth
+cleaning there too when trimming it under 300 words). Annotated the field's
+scaffolding note accordingly.
