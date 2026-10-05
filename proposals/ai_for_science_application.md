@@ -77,7 +77,7 @@ Professor of Astronomy and Astrophysics
 
 ### Where did you hear about this program?
 
-From a colleague who now works at Anthropic (Brice Ménard).
+From a colleague at Johns Hopkinds (Brice Ménard).
 
 ---
 
